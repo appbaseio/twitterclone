@@ -1,0 +1,26 @@
+
+    <div class="container" style="padding-top: 70px;margin-top: 3%;">
+        <div>
+            <div class="row">
+                <style type="text/css">
+                    #tweetstream{
+                    margin-top: 3% !important;
+                    }
+                @media screen and (max-width: 550px){
+                    #tweetstream{
+                        margin-top: 15% !important;
+                    }
+                }
+                </style>
+                <div class="col-xs-offset-5">Searching for '{{currentQuery}}'</div>
+                <div class="col-md-6 col-md-offset-1" style="min-height: 200px; max-height: 500px;">
+                    <ul class="list-group" id="tweetstream">
+                        <li class="list-group-item" ng-repeat="tweet in tweets.slice().reverse()  | orderBy:'priority':true"> <!--ng-repeat-->
+                            <a><h4 ng-click="gotoProfile(tweet.by)" style="cursor:pointer" class="list-group-item-heading">{{tweet.by}}</h4></a>
+                            <p class="list-group-item-text">{{tweet.msg}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>

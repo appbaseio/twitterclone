@@ -1,0 +1,31 @@
+<style>
+    @media screen and (max-width: 700px){
+        #login{
+            width: 70% !important;
+        }
+        #tweets{
+            width: 85% !important;
+        }
+    }
+</style>
+<div class="container" style="padding-top: 70px;height: 100% !important;">
+    <form ng-submit="login()" style="width: 35%;margin:auto;" id="login">
+	    <div class="jumbotron" style="padding: 4%">
+	    	<input ng-required="true" type="text" ng-model="userId" placeholder="Name" style="border: 1px solid grey;border-radius: 5px;font-size: 1.7em;width: 100%;padding-left: 15px;"><br>
+		  	<input type="submit" value="Enter Your Name" style="width: 100%;margin-top: 3%;font-size: 1.5em;" class="btn btn-primary">
+	    </div>
+	  
+   <!-- <button ng-click=">Add</button> -->
+    </form>
+    <hr>
+    <h2 style="text-align: center;color: #3276b1">What people are up to?</h2>
+
+    <div style="padding: 2%;width: 60%;margin:auto;" id="tweets">
+	    <ul class="list-group" id="tweetstream" style="width: 95%;margin:auto;">
+		    <li class="list-group-item" ng-repeat="tweet in tweets | orderBy:'priority':true"> <!--ng-repeat-->
+		        <h4 class="list-group-item-heading">{{tweet.properties.by}}</h4>
+		        <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+		    </li>
+		</ul>
+	</div>
+</div>

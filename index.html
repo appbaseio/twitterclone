@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html ng-app="twitter">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Appbase.io</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <title>Appbase.io</title>
+</head>
+<body>
+    <div ng-controller="navbar" class="navbar navbar-default navbar-fixed-top">
+        <div class="container" style="width:initial">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand" style="font-size: 180%; padding-top: 20px">Twitter on Appbase</a>
+                <div style="float:left;margin-bottom:10px;"><form ng-submit="search()"><input ng-required="true" type="text" ng-model="searchText" class="form-control" placeholder="Search tweets..." style="border: 1px solid grey;margin-top:15px;font-size: 1.1em;border-radius: 2px;width: 150px;"></form></div>
+                <button  class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-main">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li><a><button ng-hide='bahar' ng-click='goHome("global")' type="button" class="btn btn-default form-control">Global feed</button></a></li>
+                    <li><a><button ng-hide='bahar' ng-click='goHome("personal")' type="button" class="btn btn-default form-control">Personal feed</button></a></li>
+                    <li><a><button ng-hide='bahar' ng-click='gotoProfile()' type="button" class="btn btn-primary form-control">Profile</button></a></li>
+                    <li><a><button ng-hide='bahar' type="button" ng-click='exit()' class="btn btn-danger form-control">Signout</button></a></li>
+                    <li><a href="./code.html"><button ng-show='bahar' type="button" class="btn btn-info form-control">View Code</button></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div ng-view></div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js" type="application/javascript" ></script>
+    <script src="js/angular-route.min.js" type="application/javascript"></script>
+    <script src="http://cdn.appbase.io/appbase.min.js"></script>
+    <script src="http://cdn.appbase.io/ng-appbase-ref.js"></script>
+    <script src="js/ng-code.js" type="application/javascript"></script>
+
+
+</body>
+</html>
