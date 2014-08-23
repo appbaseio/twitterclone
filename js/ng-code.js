@@ -1,7 +1,7 @@
 /* In this app $rootScope is mostly used for
  * changing the route and managing visibly of navigation bar.
  */
-Appbase.credentials("aphrodite", "4d8d0072580912343cd74a09015cd217");
+Appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
 angular.module('twitter',['ngRoute','ngAppbase'])
   .run(function($rootScope,userSession,$location) {
     $rootScope.exit = function() {
