@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ng-code.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ng-code.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Provide the <code>appname</code> and <code>appsecret</code> as shown in your developer console.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Appbase.credentials(<span class="hljs-string">"twitter"</span>, <span class="hljs-string">"2cac84749bc429ad7017bb1685eafaf4"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>In this app <strong>$rootScope</strong> is used for
+changing the routes and managing visibility of navigation bar.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>angular.module(<span class="hljs-string">'twitter'</span>,[<span class="hljs-string">'ngRoute'</span>,<span class="hljs-string">'ngAppbase'</span>])
+  .run(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($rootScope,userSession,$location)</span> </span>{
+    $rootScope.exit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      userSession.exit()
+      $location.path(<span class="hljs-string">'/global'</span>)
+    }
+    $rootScope.gotoProfile = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span></span>{
+      $location.path(<span class="hljs-string">'/profile/'</span>+userId)
+    }
+    $rootScope.search = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(text)</span></span>{
+      $location.path(<span class="hljs-string">'/search/'</span>+text)
+    }
+    $rootScope.goHome = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(feed)</span></span>{
+      $location.path(<span class="hljs-string">'/home/'</span>+feed)
+    }
+    $rootScope.hideNav = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span></span>{
+      $rootScope.$broadcast(<span class="hljs-string">'hideNav'</span>,[<span class="hljs-number">1</span>])
+    }
+    $rootScope.showNav = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span></span>{
+      $rootScope.$broadcast(<span class="hljs-string">'showNav'</span>)
+    }
+    $rootScope.load = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $location.path(<span class="hljs-string">'/loading'</span>)
+    }
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Code for route management.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .config(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($routeProvider)</span></span>{
+    $routeProvider
+      .when(<span class="hljs-string">'/'</span>,
+      {
+        controller:<span class="hljs-string">'global'</span>,
+        templateUrl:<span class="hljs-string">'views/global.html'</span>
+      }
+    ).when(<span class="hljs-string">'/loading'</span>,
+      {
+        controller:<span class="hljs-string">'loading'</span>,
+        templateUrl:<span class="hljs-string">'views/loading.html'</span>
+      }
+    ).when(<span class="hljs-string">'/search/:text'</span>,
+      {
+        controller:<span class="hljs-string">'search'</span>,
+        templateUrl:<span class="hljs-string">'views/search.html'</span>
+      }
+    ).when(<span class="hljs-string">'/profile/:userId'</span>,
+      {
+        controller:<span class="hljs-string">'profile'</span>,
+        templateUrl:<span class="hljs-string">'views/profile.html'</span>
+      }
+    ).when(<span class="hljs-string">'/home/:feed'</span>,
+      {
+        controller:<span class="hljs-string">'home'</span>,
+        templateUrl:<span class="hljs-string">'views/home.html'</span>
+      }
+    ).otherwise({redirectTo:<span class="hljs-string">'/'</span>})
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><strong>Controller: global</strong>.
+Show all tweets when no one is logged in.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'global'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($scope, userSession, $location,$rootScope,$appbaseRef)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Hide <em>navbar</em> if no one is logged in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $rootScope.hideNav()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Called when the user enters name or when already logged in.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.login = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      userSession.setUser($scope.userId.replace(<span class="hljs-regexp">/ /g</span>, <span class="hljs-string">"_"</span>))
+      $location.path(<span class="hljs-string">'/loading'</span>)
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Checks if a user is already logged in the session.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span>( $scope.userId = userSession.getUser()){
+      $scope.login()
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Show all tweets under <em>global/tweets</em> using <code>bindEdges</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $appbaseRef(<span class="hljs-string">'global/tweets'</span>).$bindEdges($scope,<span class="hljs-string">'tweets'</span>)
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>Controller: search</strong>.
+Search’s for tweets in Appbase and shows results.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'search'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($scope, $rootScope, $routeParams)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Getting the ‘query text’ from route parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.currentQuery = $routeParams.text</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Searching in the namespace: <strong>tweet</strong> for vertices, which contain ‘query text’ in the property: <strong>msg</strong>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Appbase.search(<span class="hljs-string">'tweet'</span>,{text: $routeParams.text, properties:[<span class="hljs-string">'msg'</span>]},<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error, array)</span> </span>{
+      $scope.tweets = array
+      $scope.$apply()
+    })
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>Controller: Loading</strong>.
+It inits the <strong>data</strong> factory, which is used everywhere in the app to fetch and set data from/to Appbase.
+After the <em>init</em> completes, it takes the user to <em>home</em> screen, showing personal tweets of the user.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'loading'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">($rootScope,$scope, userSession, data)</span> </span>{
+    <span class="hljs-keyword">if</span>(!userSession.getUser()){
+      $rootScope.exit()
+      <span class="hljs-keyword">return</span>
+    }
+    data.init(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $scope.$apply(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+        $rootScope.goHome(<span class="hljs-string">'personal'</span>)
+      })
+    })
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>Controller: navbar</strong>.
+Handles button clicks and visibility of buttons.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'navbar'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($scope,userSession,$location,$rootScope,$routeParams)</span></span>{
+    $scope.bahar = <span class="hljs-literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Called when user enters a text in the search box and presses enter key.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.search = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $rootScope.search($scope.searchText)
+      $scope.searchText = <span class="hljs-string">''</span>
+    }
+    $scope.$on(<span class="hljs-string">'showNav'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $scope.bahar = <span class="hljs-literal">false</span>
+    })
+    $scope.$on(<span class="hljs-string">'hideNav'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $scope.bahar = <span class="hljs-literal">true</span>
+    })
+    $scope.exit= <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      $rootScope.exit()
+    }
+    $scope.gotoProfile= <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span></span>{
+      <span class="hljs-keyword">if</span>(userId === <span class="hljs-literal">undefined</span>)
+        <span class="hljs-keyword">var</span> userId = userSession.getUser()
+      $rootScope.gotoProfile(userId)
+    }
+    $scope.goHome = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(feed)</span></span>{
+      $rootScope.goHome(feed)
+    }
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><strong>Controller: home</strong>.
+This is what the user sees first when logged in. It shows the personal and global tweet feeds
+The personal tweet feed: shows tweets from people he follows.
+The global feed: tweets by everyone</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'home'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($scope,userSession,$location,$rootScope,$appbaseRef,$routeParams,data)</span></span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Check if the session is properly initiated,
+i.e. the ‘data’ factory set the flag ‘initComplete’ in userSession.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span>(!userSession.initComplete) {
+      <span class="hljs-keyword">if</span>(!userSession.getUser())
+        $rootScope.exit()
+      <span class="hljs-keyword">else</span>
+        $rootScope.load()
+      <span class="hljs-keyword">return</span>
+    }
+    $rootScope.showNav()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Get <strong>feed</strong> from route parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> feed = $routeParams.feed === <span class="hljs-literal">undefined</span>? <span class="hljs-string">'global'</span>: $routeParams.feed
+    $scope.tweets = []
+    $scope.people = []
+    $scope.userName = userSession.getUser()
+    $scope.gotoProfile = $rootScope.gotoProfile</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Show <em>People on Twitter</em>, user’s <em>Followers</em> and <em>Followings</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $appbaseRef(data.refs.allUsers).$bindEdges($scope,<span class="hljs-string">'people'</span>)
+    $appbaseRef(data.refs.usersFollowers).$bindEdges($scope,<span class="hljs-string">'followers'</span>)
+    $appbaseRef(data.refs.usersFollowing).$bindEdges($scope,<span class="hljs-string">'following'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Called when user posts a new tweet.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      data.addTweet($scope.msg)
+      $scope.msg = <span class="hljs-string">''</span>
+    }
+    <span class="hljs-keyword">if</span>(feed === <span class="hljs-string">'global'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Show all tweets.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $appbaseRef(data.refs.globalTweets).$bindEdges($scope,<span class="hljs-string">'tweets'</span>)
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Fetch tweets of the people followed by the user. Every following’s tweets are pushed into <code>arraysOfTweets</code> as an array,
+and in the end, these arrays are merged into personalTweets by calling <code>personalTweets.concat.apply(personalTweets, arraysOfTweets)</code>
+in <em>home.html</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $scope.personalTweets = []
+      $scope.arraysOfTweets = []
+      $scope.arraysOfTweets.push($appbaseRef(<span class="hljs-string">'user/'</span>+userSession.getUser()+<span class="hljs-string">'/tweets'</span>).$bindEdges($scope))
+      <span class="hljs-keyword">var</span> usrRef = Appbase.ref(<span class="hljs-string">'user/'</span>+userSession.getUser()+<span class="hljs-string">'/following'</span>)
+      usrRef.on(<span class="hljs-string">'edge_added'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error, followUserRef)</span> </span>{
+        <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error
+        $scope.arraysOfTweets.push($appbaseRef(followUserRef).$outVertex(<span class="hljs-string">'tweets'</span>).$bindEdges($scope))
+      })
+      $scope.$on(<span class="hljs-string">'$destroy'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Stop listening to user’s followings when the view is destroyed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        usrRef.off()
+      })
+    }
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><strong>Controller: profile</strong>.
+Where a user’s followings, followers and tweets are shown.
+A user can also see other’s profiles and choose to follow/unfollow the person from his/her profile.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'profile'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($scope,userSession,$location,$rootScope,$routeParams,$appbaseRef,data)</span></span>{
+    <span class="hljs-keyword">if</span>(!userSession.initComplete) {
+      <span class="hljs-keyword">if</span>(!userSession.getUser())
+        $rootScope.exit()
+      <span class="hljs-keyword">else</span>
+        $rootScope.load()
+      <span class="hljs-keyword">return</span>
+    }
+    $rootScope.showNav()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Get the userId from route params.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> userId = $routeParams.userId
+    $scope.userId = $routeParams.userId</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Check whether this profile is of the logged in user.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.isMe = userSession.getUser() === userId
+    $scope.userName = $routeParams.userId
+    $scope.isReady = <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Check whether this user is being followed by the logged in user.
+This has to be an async function, as it interacts with the Appbase server.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    !$scope.isMe &amp;&amp; data.isUserBeingFollowed(userId,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(boolean)</span></span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>If true, <em>unfollow</em> button will appear, otherwise <em>follow</em> one.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $scope.isBeingFollowed = boolean</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Show <em>follow</em> or <em>unfollow</em> buttons only when the data is arrived.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      $scope.isReady = <span class="hljs-literal">true</span>
+    })
+    $scope.gotoProfile = $rootScope.gotoProfile
+    $scope.follow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span></span>{
+      $scope.isBeingFollowed = <span class="hljs-literal">true</span>
+      data.follow(userId)
+    }
+    $scope.unFollow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span></span>{
+      $scope.isBeingFollowed = <span class="hljs-literal">false</span>
+      data.unFollow(userId)
+    }
+    $scope.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      data.addTweet($scope.msg)
+      $scope.msg = <span class="hljs-string">''</span>
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Fetch user’s followers, followings and tweets.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $appbaseRef(<span class="hljs-string">'user/'</span>+userId+<span class="hljs-string">'/followers'</span>).$bindEdges($scope,<span class="hljs-string">'followers'</span>)
+    $appbaseRef(<span class="hljs-string">'user/'</span>+userId+<span class="hljs-string">'/following'</span>).$bindEdges($scope,<span class="hljs-string">'following'</span>)
+    $appbaseRef(<span class="hljs-string">'user/'</span>+userId+<span class="hljs-string">'/tweets'</span>).$bindEdges($scope,<span class="hljs-string">'tweets'</span>)
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p><strong>Factory: data</strong>.
+Stores frequently useful Appbase references and interacts with Appbase for data needs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .factory(<span class="hljs-string">'data'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userSession)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Appbase references</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> refs = {
+      globalTweets: Appbase.ref(<span class="hljs-string">'global/tweets'</span>),
+      allUsers: Appbase.ref(<span class="hljs-string">'global/users'</span>)
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Factory to be exported</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> data = {
+      refs:refs
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Called when the user just logs in.
+It sets required references and creates basic data for a new user.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    data.init = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ready)</span> </span>{
+      <span class="hljs-keyword">var</span> userId = userSession.getUser()
+      refs.user = Appbase.create(<span class="hljs-string">'user'</span>,userSession.getUser())
+      refs.usersTweets = refs.user.outVertex(<span class="hljs-string">'tweets'</span>)
+      refs.usersFollowers = refs.user.outVertex(<span class="hljs-string">'followers'</span>)
+      refs.usersFollowing = refs.user.outVertex(<span class="hljs-string">'following'</span>)
+      refs.user.on(<span class="hljs-string">'properties'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error, ref, snap)</span> </span>{
+        refs.user.off()
+        <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error
+        <span class="hljs-keyword">if</span> (snap.properties().name === <span class="hljs-literal">undefined</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>The user logged in for the first time.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          Appbase.ref(<span class="hljs-string">'global/users'</span>).setEdge(refs.user,userId)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Set user’s name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          refs.user.setData({
+            name: userId
+          })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Create vertices which will store user’s followers, followings and tweets.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          refs.user.setEdge(Appbase.create(<span class="hljs-string">'misc'</span>,Appbase.uuid()),<span class="hljs-string">'tweets'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span></span>{
+            <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error
+            refs.user.setEdge(Appbase.create(<span class="hljs-string">'misc'</span>,Appbase.uuid()),<span class="hljs-string">'followers'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span></span>{
+              <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error
+              refs.user.setEdge(Appbase.create(<span class="hljs-string">'misc'</span>,Appbase.uuid()),<span class="hljs-string">'following'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span></span>{
+                <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Set the flag true in userSession</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                userSession.initComplete = <span class="hljs-literal">true</span>
+                ready()
+              })
+            })
+          })
+        } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>The user exists in Appbase.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          userSession.initComplete = <span class="hljs-literal">true</span>
+          ready()
+        }
+      })
+    }
+    data.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Create a new ‘tweet’ vertex and store the tweet message</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> tweetRef = Appbase.create(<span class="hljs-string">'tweet'</span>,Appbase.uuid())
+      tweetRef.setData({ <span class="hljs-string">'msg'</span>: msg, <span class="hljs-string">'by'</span>: userSession.getUser() },<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error, tweetRef)</span> </span>{
+        <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Add this tweet as an edge, in user’s own tweets and global tweets.
+We really don’t care about the edge’s name here</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> randomEdgeName = Appbase.uuid()
+        refs.usersTweets.setEdge(tweetRef,randomEdgeName)
+        refs.globalTweets.setEdge(tweetRef,randomEdgeName)
+      })
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Checks whether provided userId is being followed by the logged in user</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    data.isUserBeingFollowed = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId,callback)</span></span>{
+      refs.usersFollowing.outVertex(userId).isValid(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error, bool)</span></span>{
+        <span class="hljs-keyword">if</span>(error) <span class="hljs-keyword">throw</span> error
+        callback(bool)
+      })
+    }
+    data.follow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span> </span>{
+      refs.usersFollowing.setEdge(Appbase.ref(<span class="hljs-string">'user/'</span>+userId),userId)
+      Appbase.ref(<span class="hljs-string">'user/'</span>+userId+<span class="hljs-string">'/followers'</span>).setEdge(refs.user,userSession.getUser())
+    }
+    data.unFollow = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span> </span>{
+      refs.usersFollowing.removeEdge(userId)
+      Appbase.ref(<span class="hljs-string">'user/'</span>+userId+<span class="hljs-string">'/followers'</span>).removeEdge(userSession.getUser())
+    }
+    <span class="hljs-keyword">return</span> data
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>Stores logged in user’s id.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .factory(<span class="hljs-string">'userSession'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">var</span> userSession = {}
+    userSession.initComplete = <span class="hljs-literal">false</span>
+    userSession.setUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(userId)</span></span>{
+      localStorage.setItem(<span class="hljs-string">"currentLoggedInUser"</span>, userId)
+    }
+    userSession.exit = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      localStorage.removeItem(<span class="hljs-string">"currentLoggedInUser"</span>)
+    }
+    userSession.getUser = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{
+      <span class="hljs-keyword">return</span> localStorage.getItem(<span class="hljs-string">"currentLoggedInUser"</span>)
+    }
+    <span class="hljs-keyword">return</span> userSession
+  })</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
