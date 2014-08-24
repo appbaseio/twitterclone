@@ -87,11 +87,7 @@
                     <div class="row">
                         <ul class="list-group" id="tweetstream">
                             <li class="list-group-item" ng-repeat="tweet in tweets  | orderBy:'priority':true"> <!--ng-repeat-->
-                                {{properties}}
-                                <h4 class="list-group-item-heading">{{tweet.properties.by}}
-                                    <!-- span class="badge pull-right">{{tweet.$links.$count['User']}}</span -->
-                                    <!-- span class="glyphicon glyphicon-heart pull-right liked" style="padding-right: 5px; color: rgb(41,120,176)"></span -->
-                                </h4>
+                                <h4 class="list-group-item-heading">{{tweet.properties.by}} <span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
                                 <p class="list-group-item-text">{{tweet.properties.msg}}</p>
                             </li>
 

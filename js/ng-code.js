@@ -26,6 +26,9 @@ angular.module('twitter',['ngRoute','ngAppbase'])
     $rootScope.load = function() {
       $location.path('/loading')
     }
+    $rootScope.convertToVisibleTime = function(timestamp){
+      return new Date(timestamp).toTwitterRelativeTime()
+    }
   })
   // Code for route management.
   .config(function($routeProvider){
@@ -62,6 +65,7 @@ angular.module('twitter',['ngRoute','ngAppbase'])
   .controller('global', function ($scope, userSession, $location,$rootScope,$appbaseRef) {
     // Hide *navbar* if no one is logged in
     $rootScope.hideNav()
+    $scope.convertToVisibleTime = $rootScope.convertToVisibleTime
 
     // Called when the user enters name or when already logged in.
     $scope.login = function() {
@@ -141,6 +145,7 @@ angular.module('twitter',['ngRoute','ngAppbase'])
         $rootScope.load()
       return
     }
+    $scope.convertToVisibleTime = $rootScope.convertToVisibleTime
     $rootScope.showNav()
     // Get __feed__ from route parameters.
     var feed = $routeParams.feed === undefined? 'global': $routeParams.feed
@@ -190,6 +195,7 @@ angular.module('twitter',['ngRoute','ngAppbase'])
         $rootScope.load()
       return
     }
+    $scope.convertToVisibleTime = $rootScope.convertToVisibleTime
     $rootScope.showNav()
 
     // Get the userId from route params.
