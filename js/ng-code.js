@@ -2,7 +2,7 @@
 Appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
 // In this app **$rootScope** is used for
 // changing the routes and managing visibility of navigation bar.
-angular.module('twitter', ['ngRoute', 'ngAppbase'])
+angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize'])
     .run(function ($rootScope, userSession, $location) {
         "use strict";
         $rootScope.exit = function () {
@@ -29,6 +29,13 @@ angular.module('twitter', ['ngRoute', 'ngAppbase'])
         };
         $rootScope.convertToVisibleTime = function (timestamp) {
             return new Date(timestamp).toTwitterRelativeTime();
+        };
+        $rootScope.urlify = function (text) {
+            var urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+                console.log("urlregex matched, ", url);
+                return '<a href="' + url + '">' + url + '</a>';
+            });
         };
     })
     // Code for route management.
@@ -60,7 +67,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase'])
         // Hide *navbar* if no one is logged in
         $rootScope.hideNav();
         $scope.convertToVisibleTime = $rootScope.convertToVisibleTime;
-
+        $scope.urlify = $rootScope.urlify;
         // Called when the user enters name or when already logged in.
         $scope.login = function () {
             userSession.setUser($scope.userId.replace(/ /g, "_"));
@@ -73,10 +80,11 @@ angular.module('twitter', ['ngRoute', 'ngAppbase'])
     })
     // **Controller: search**.
     // Search's for tweets in Appbase and shows results.
-    .controller('search', function ($scope, $routeParams) {
+    .controller('search', function ($scope, $rootScope, $routeParams) {
         "use strict";
         // Getting the 'query text' from route parameters.
         $scope.currentQuery = $routeParams.text;
+        $scope.urlify = $rootScope.urlify;
         // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
         Appbase.search('tweet', {text: $routeParams.text, properties: ['msg']}, function (error, array) {
             if (!error) {
@@ -144,6 +152,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase'])
             return;
         }
         $scope.convertToVisibleTime = $rootScope.convertToVisibleTime;
+        $scope.urlify = $rootScope.urlify;
         $rootScope.showNav();
         // Get __feed__ from route parameters.
         var feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed,

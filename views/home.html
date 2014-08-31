@@ -60,12 +60,12 @@
                     <ul class="list-group" id="tweetstream">
                         <li class="list-group-item" ng-repeat="tweet in tweets  | orderBy:'priority':true"> <!--ng-repeat-->
                             <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
                         </li>
                         <li class="list-group-item" ng-repeat="tweet in personalTweets.concat.apply(personalTweets, arraysOfTweets)  | orderBy:'priority':true">
                             <!--ng-repeat-->
                             <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
                         </li>
                     </ul>
                 </div>
