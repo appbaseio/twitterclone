@@ -33,7 +33,7 @@
 	    <ul class="list-group" id="tweetstream" style="width: 95%;margin:auto;height: 35vh; overflow: auto;"  vs-repeat  when-scrolled="tweetsDisplayed = tweetsDisplayed + 8;">
 		    <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed" style="width: 100%"> <!--ng-repeat-->
 		        <h4 class="list-group-item-heading">{{tweet.properties.by}}<span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-		        <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+		        <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
 		    </li>
 		</ul>
 	</div>

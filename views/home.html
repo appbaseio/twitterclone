@@ -60,13 +60,13 @@
                     <ul ng-show="tweets !== undefined" class="list-group" id="tweetstream" vs-repeat style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
                         <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed" style="width: 100%">
                             <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
                         </li>
                     </ul>
                     <ul ng-show="personalTweets !== undefined" class="list-group" vs-repeat style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
                         <li class="list-group-item" ng-repeat="tweet in personalTweets.concat.apply(personalTweets, arraysOfTweets)  | orderBy:'priority':true" style="width: 100%">
                             <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text">{{tweet.properties.msg}}</p>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
                         </li>
                     </ul>
                 </div>

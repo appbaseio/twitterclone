@@ -17,7 +17,7 @@
                     <ul class="list-group" id="tweetstream">
                         <li class="list-group-item" ng-repeat="tweet in tweets.slice().reverse()  | orderBy:'priority':true"> <!--ng-repeat-->
                             <a><h4 ng-click="gotoProfile(tweet.by)" style="cursor:pointer" class="list-group-item-heading">{{tweet.by}}</h4></a>
-                            <p class="list-group-item-text">{{tweet.msg}}</p>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.msg)"></p>
                         </li>
                     </ul>
                 </div>
