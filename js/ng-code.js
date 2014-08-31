@@ -33,7 +33,6 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
         $rootScope.urlify = function (text) {
             var urlRegex = /(https?:\/\/[^\s]+)/g;
             return text.replace(urlRegex, function(url) {
-                console.log("urlregex matched, ", url);
                 return '<a href="' + url + '" target="_blank">' + url + '</a>';
             });
         };
