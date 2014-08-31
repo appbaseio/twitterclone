@@ -32,9 +32,13 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize'])
         };
         $rootScope.urlify = function (text) {
             var urlRegex = /(https?:\/\/[^\s]+)/g;
-            return text.replace(urlRegex, function(url) {
-                return '<a href="' + url + '" target="_blank">' + url + '</a>';
-            });
+            if (typeof text !== "undefined") {
+                return text.replace(urlRegex, function(url) {
+                    return '<a href="' + url + '" target="_blank">' + url + '</a>';
+                });
+            } else {
+                return text;
+            }
         };
     })
     // Code for route management.
