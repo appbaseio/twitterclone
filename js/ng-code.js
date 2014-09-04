@@ -3,7 +3,7 @@ Appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
 // In this app **$rootScope** is used for
 // changing the routes and managing visibility of navigation bar.
 angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
-  .run(function ($rootScope, userSession, $location) {
+  .run(function ($rootScope, userSession, $location, $interval) {
     "use strict";
     $rootScope.exit = function () {
       userSession.exit();
@@ -30,16 +30,19 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
     $rootScope.convertToVisibleTime = function (timestamp) {
       return new Date(timestamp).toTwitterRelativeTime();
     };
-        $rootScope.urlify = function (text) {
-            var urlRegex = /(https?:\/\/[^\s]+)/g;
-            if (typeof text !== "undefined") {
-                return text.replace(urlRegex, function(url) {
-                    return '<a href="' + url + '" target="_blank">' + url + '</a>';
-                });
-            } else {
-                return text;
-            }
-        };
+    $rootScope.urlify = function (text) {
+      var urlRegex = /(https?:\/\/[^\s]+)/g;
+      if (typeof text !== "undefined") {
+        return text.replace(urlRegex, function(url) {
+          return '<a href="' + url + '" target="_blank">' + url + '</a>';
+        });
+      } else {
+        return text;
+      }
+    };
+    $interval(function() {
+      //this interval causes causes a $digest cycle in angular, automatically updating all the timestamps for tweets
+    }, 60000)
   })
   // Code for route management.
   .config(function ($routeProvider) {
