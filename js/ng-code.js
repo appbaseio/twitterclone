@@ -2,7 +2,7 @@
 Appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
 // In this app **$rootScope** is used for
 // changing the routes and managing visibility of navigation bar.
-angular.module('twitter',['ngRoute','ngAppbase'])
+angular.module('twitter',['ngRoute','ngAppbase', 'vs-repeat'])
   .run(function($rootScope,userSession,$location) {
     $rootScope.exit = function() {
       userSession.exit()
@@ -76,8 +76,9 @@ angular.module('twitter',['ngRoute','ngAppbase'])
     if( $scope.userId = userSession.getUser()){
       $scope.login()
     }
-    // Show all tweets under *global/tweets* using ``bindEdges``.
-    $appbaseRef('global/tweets').$bindEdges($scope,'tweets')
+    // Show all tweets under *global/tweets* using ``bindEdges``, in reverse order of their priorities.
+    $appbaseRef('global/tweets').$bindEdges($scope,'tweets', false, false, {}, true)
+    $scope.tweetsDisplayed = 8
   })
   // **Controller: search**.
   // Search's for tweets in Appbase and shows results.
@@ -100,7 +101,7 @@ angular.module('twitter',['ngRoute','ngAppbase'])
     }
     data.init(function() {
       $scope.$apply(function() {
-        $rootScope.goHome('personal')
+        $rootScope.goHome('global')
       })
     })
   })
@@ -145,16 +146,22 @@ angular.module('twitter',['ngRoute','ngAppbase'])
         $rootScope.load()
       return
     }
+
+    $scope.calling = function() {
+      console.log('called')
+    }
+
     $scope.convertToVisibleTime = $rootScope.convertToVisibleTime
     $rootScope.showNav()
     // Get __feed__ from route parameters.
     var feed = $routeParams.feed === undefined? 'global': $routeParams.feed
-    $scope.tweets = []
-    $scope.people = []
+
+    $scope.tweetsDisplayed = 15
+    $scope.peopleDisplayed = 8
     $scope.userName = userSession.getUser()
     $scope.gotoProfile = $rootScope.gotoProfile
     // Show _People on Twitter_, user's _Followers_ and _Followings_.
-    $appbaseRef(data.refs.allUsers).$bindEdges($scope,'people')
+    $appbaseRef(data.refs.allUsers).$bindEdges($scope,'people', false, false, {}, true)
     $appbaseRef(data.refs.usersFollowers).$bindEdges($scope,'followers')
     $appbaseRef(data.refs.usersFollowing).$bindEdges($scope,'following')
 
@@ -165,7 +172,7 @@ angular.module('twitter',['ngRoute','ngAppbase'])
     }
     if(feed === 'global') {
       // Show all tweets.
-      $appbaseRef(data.refs.globalTweets).$bindEdges($scope,'tweets')
+      $appbaseRef(data.refs.globalTweets).$bindEdges($scope,'tweets', false, false, {}, true)
     } else {
       // Fetch tweets of the people followed by the user. Every following's tweets are pushed into `arraysOfTweets` as an array,
       // and in the end, these arrays are merged into personalTweets by calling `personalTweets.concat.apply(personalTweets, arraysOfTweets)`
@@ -327,3 +334,13 @@ angular.module('twitter',['ngRoute','ngAppbase'])
     }
     return userSession
   })
+  .directive('whenScrolled', function() {
+    return function(scope, elm, attr) {
+      var raw = elm[0];
+      elm.bind('scroll', function() {
+        if (raw.scrollTop + raw.offsetHeight + 1 >= raw.scrollHeight) { // + 1 added, as a workaround for: (raw.scrollTop + raw.offsetHeight- raw.scrollHeight) would always stop at -1.
+          scope.$apply(attr.whenScrolled);
+        }
+      });
+    };
+  });
