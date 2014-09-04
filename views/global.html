@@ -1,44 +1,47 @@
-<style>
-    body {
-        overflow-x: hidden;
-    }
-    @media screen and (max-width: 700px){
-        #login{
-            width: 70% !important;
+<div style="height: 90vh;overflow-y: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 8;">
+    <style>
+        body {
+            overflow-x: hidden;
+            margin-top: 10vh;
         }
-        #tweets{
-            width: 85% !important;
+        @media screen and (max-width: 700px){
+            #login{
+                width: 70% !important;
+            }
+            #tweets{
+                width: 85% !important;
+            }
         }
-    }
-</style>
-<a href="https://github.com/appbaseio/twitter-appbase"><img style="position: absolute; right: 0; border: 0" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-<div class="container" style="margin-top:100px;">
-    <div class="alert alert-warning fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-        <p style="text-align:center;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
-        Read the blog about how we built this in 300 lines of clientside Javascript <a href="http://news.appbase.io/posts/222589-twitter-appbase" target="_blank">here</a>.
-        </p>
+    </style>
+    <a href="https://github.com/appbaseio/twitter-appbase"><img style="position: absolute; right: 0; border: 0" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+    <div class="container" style="margin-top:5vh;">
+        <div class="alert alert-warning fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <p style="text-align:center;">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+                Read the blog about how we built this in 300 lines of clientside Javascript <a href="http://news.appbase.io/posts/222589-twitter-appbase" target="_blank">here</a>.
+            </p>
+        </div>
     </div>
-</div>
-<div class="container" style="height: 100% !important;">
-    <form ng-submit="login()" style="width: 35%;margin:auto;" id="login">
-	    <div class="jumbotron" style="padding: 4%">
-	    	<input ng-required="true" type="text" ng-model="userId" placeholder="Name" style="border: 1px solid grey;border-radius: 5px;font-size: 1.7em;width: 100%;padding-left: 15px;"><br>
-		  	<input type="submit" value="Enter Your Name" style="width: 100%;margin-top: 3%;font-size: 1.5em;" class="btn btn-primary">
-	    </div>
-	  
-   <!-- <button ng-click=">Add</button> -->
-    </form>
-    <hr>
-    <h2 style="text-align: center;color: #3276b1">What are people up to?</h2>
+    <div class="container" style="height: 100% !important;">
+        <form ng-submit="login()" style="width: 35%;margin:auto;" id="login">
+            <div class="jumbotron" style="padding: 4%">
+                <input ng-required="true" type="text" ng-model="userId" placeholder="Name" style="border: 1px solid grey;border-radius: 5px;font-size: 1.7em;width: 100%;padding-left: 15px;"><br>
+                <input type="submit" value="Enter Your Name" style="width: 100%;margin-top: 3%;font-size: 1.5em;" class="btn btn-primary">
+            </div>
 
-    <div style="padding: 2%;width: 60%;margin:auto;" id="tweets">
-	    <ul class="list-group" id="tweetstream" style="width: 95%;margin:auto;height: 35vh; overflow: auto;"  vs-repeat  when-scrolled="tweetsDisplayed = tweetsDisplayed + 8;">
-		    <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed" style="width: 100%"> <!--ng-repeat-->
-		        <h4 class="list-group-item-heading">{{tweet.properties.by}}<span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-		        <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
-		    </li>
-		</ul>
-	</div>
+            <!-- <button ng-click=">Add</button> -->
+        </form>
+        <hr>
+        <h2 style="text-align: center;color: #3276b1">What are people up to?</h2>
+
+        <div style="padding: 2%;width: 60%;margin:auto;" id="tweets">
+            <ul class="list-group" id="tweetstream" style="width: 95%;margin:auto;" >
+                <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed" style="width: 100%"> <!--ng-repeat-->
+                    <h4 class="list-group-item-heading">{{tweet.properties.by}}<span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
+                    <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
