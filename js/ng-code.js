@@ -99,6 +99,19 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
         $scope.$apply();
       }
     });
+    Appbase.search('tweet', {text: $routeParams.text, properties: ['by']}, function (error, array) {
+      if (!error) {
+        $scope.users = [];
+        array.forEach(function(tweet) {
+          if($scope.users.indexOf(tweet.by) === -1) {
+            $scope.users.push(tweet.by);
+          }
+        })
+        $scope.$apply();
+      } else {
+        throw error
+      }
+    });
   })
   // **Controller: Loading**.
   // It inits the __data__ factory, which is used everywhere in the app to fetch and set data from/to Appbase.
