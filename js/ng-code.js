@@ -283,34 +283,49 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
       refs.usersTweets = refs.user.outVertex('tweets');
       refs.usersFollowers = refs.user.outVertex('followers');
       refs.usersFollowing = refs.user.outVertex('following');
-      refs.user.on('properties', function (error, ref, snap) {
-        refs.user.off();
-        if (error) {throw error; }
-        if (snap.properties().name === undefined) {
-          // The user logged in for the first time.
-          Appbase.ref('global/users').setEdge(refs.user, userId);
-          // Set user's name
-          refs.user.setData({
-            name: userId
-          });
-          // Create vertices which will store user's followers, followings and tweets.
-          refs.user.setEdge(Appbase.create('misc', Appbase.uuid()), 'tweets', function (error) {
-            if (error) {throw error; }
-            refs.user.setEdge(Appbase.create('misc', Appbase.uuid()), 'followers', function (error) {
-              if (error) {throw error; }
-              refs.user.setEdge(Appbase.create('misc', Appbase.uuid()), 'following', function (error) {
-                if (error) {throw error; }
-                //Set the flag true in userSession
-                userSession.initComplete = true;
-                ready();
-              });
-            });
-          });
-        } else {
-          // The user exists in Appbase.
-          userSession.initComplete = true;
-          ready();
+      
+      var edgeCreation = function(ref, edgeName, edgeRef) {
+        return function(callback) {
+          var checkAndCreate = function() {
+            ref.outVertex(edgeName).isValid(function(error, bool) {
+                if (error) callback(error);
+                if(bool) {
+                  callback();
+                } else {
+                  ref.setEdge(edgeRef || Appbase.create('misc', Appbase.uuid()), edgeName, function (error) {
+                    if (error) callback(error);
+                    checkAndCreate();
+                  });
+                }
+              })
+          }
+          checkAndCreate();
         }
+      }
+      //checking if edges 'tweets', 'followers', 'following' exists. If not, create them.
+      async.parallel([ edgeCreation(refs.user, 'tweets'), 
+          edgeCreation(refs.user, 'followers'), 
+          edgeCreation(refs.user, 'following'),
+          edgeCreation(refs.allUsers, userId, refs.user),
+          function(callback) {
+            refs.user.on('properties', function (error, ref, snap) {
+              refs.user.off();
+              if (error) {throw error; }
+              if (snap.properties().name === undefined) {
+                // The user logged in for the first time, set his name
+                refs.user.setData({
+                  name: userId
+                }, callback);
+              } else {
+                callback();
+              }
+            });
+          }
+        ],
+       function(error) {
+        if(error) throw error;
+        userSession.initComplete = true;
+        ready();
       });
     };
     data.addTweet = function (msg) {
