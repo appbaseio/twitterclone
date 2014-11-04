@@ -6,7 +6,7 @@ You can simply run a http-server on the root directory using 'python -m SimpleHT
 
 ## How to extend this:
 
-The app name and secret are published in the code, so you can just keep hacking on this repository! See the [Appbase Javascript API](www.appbase.io/docs/js/index.html).
+The app name and secret are published in the code, so you can just keep hacking on this repository! See the [Appbase Javascript API](http://docs.appbase.io/docs/js.html).
 
 Ideally, you should create your own app on [Appbase](http://appbase.io), so you can isolate your data records from everyone else.
 
