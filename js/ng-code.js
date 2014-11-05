@@ -217,16 +217,20 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
   // A user can also see other's profiles and choose to follow/unfollow the person from his/her profile.
   .controller('profile', function ($scope, userSession, $rootScope, $routeParams, $appbaseRef, data) {
     "use strict";
+    var notLoggedIn;
     if (!userSession.initComplete) {
+      notLoggedIn = true;
+      /*
       if (!userSession.getUser()) {
         $rootScope.exit();
       } else {
         $rootScope.load();
       }
       return;
+      */
     }
     $scope.convertToVisibleTime = $rootScope.convertToVisibleTime;
-    $rootScope.showNav();
+    !notLoggedIn && $rootScope.showNav();
 
     // Get the userId from route params.
     var userId = $routeParams.userId;
@@ -238,12 +242,13 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
 
     // Check whether this user is being followed by the logged in user.
     // This has to be an async function, as it interacts with the Appbase server.
-    if (!$scope.isMe) {
+    if (!notLoggedIn && !$scope.isMe) {
       data.isUserBeingFollowed(userId, function (boolean) {
         // If true, _unfollow_ button will appear, otherwise _follow_ one.
         $scope.isBeingFollowed = boolean;
         // Show _follow_ or _unfollow_ buttons only when the data is arrived.
         $scope.isReady = true;
+        $scope.$apply();
       });
     }
     $scope.gotoProfile = $rootScope.gotoProfile;
