@@ -1,10 +1,12 @@
-// Provide the ``appname`` and ``appsecret`` as shown in your developer console.
-Appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
-// In this app **$rootScope** is used for
-// changing the routes and managing visibility of navigation bar.
 angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
-  .run(function ($rootScope, userSession, $location, $interval) {
+  .run(function ($rootScope, userSession, $location, $interval, $appbase) {
     "use strict";
+  
+    // Provide the ``appname`` and ``appsecret`` as shown in your developer console.
+    $appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
+  
+    // Here **$rootScope** is used for
+    // changing the routes and managing visibility of navigation bar.
     $rootScope.exit = function () {
       userSession.exit();
       $location.path('/global');
@@ -68,7 +70,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
   })
   // **Controller: global**.
   // Show all tweets when no one is logged in.
-  .controller('global', function ($scope, userSession, $location, $rootScope, $appbaseRef) {
+  .controller('global', function ($scope, userSession, $location, $rootScope, $appbase, data) {
     "use strict";
     // Hide *navbar* if no one is logged in
     $rootScope.hideNav();
@@ -80,26 +82,26 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
       $location.path('/loading');
     };
     // Checks if a user is already logged in the session.
-    if ($scope.userId === userSession.getUser()) {$scope.login(); }
+    if ($scope.userId === userSession.getUser()) $scope.login();
     // Show all tweets under *global/tweets* using ``bindEdges``, in reverse order of their priorities.
-    $appbaseRef('global/tweets').$bindEdges($scope,'tweets', false, false, {}, true);
-    $scope.tweetsDisplayed = 8
+    $scope.tweets = data.refs.globalTweets.bindEdges($scope);
+    $scope.tweetsDisplayed = 8;
   })
   // **Controller: search**.
   // Search's for tweets in Appbase and shows results.
-    .controller('search', function ($scope, $rootScope, $routeParams) {
+    .controller('search', function ($scope, $rootScope, $routeParams, $appbase) {
     "use strict";
     // Getting the 'query text' from route parameters.
     $scope.currentQuery = $routeParams.text;
         $scope.urlify = $rootScope.urlify;
     // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
-    Appbase.search('tweet', {text: $routeParams.text, properties: ['msg']}, function (error, array) {
+    $appbase.ns('tweet').search({text: $routeParams.text, properties: ['msg']}, function (error, array) {
       if (!error) {
         $scope.tweets = array;
         $scope.$apply();
       }
     });
-    Appbase.search('tweet', {text: $routeParams.text, properties: ['by']}, function (error, array) {
+    $appbase.ns('tweet').search({text: $routeParams.text, properties: ['by']}, function (error, array) {
       if (!error) {
         $scope.users = [];
         array.forEach(function(tweet) {
@@ -159,7 +161,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
   // This is what the user sees first when logged in. It shows the personal and global tweet feeds
   // The personal tweet feed: shows tweets from people he follows.
   // The global feed: tweets by everyone
-  .controller('home', function ($scope, userSession, $rootScope, $appbaseRef, $routeParams, data) {
+  .controller('home', function ($scope, userSession, $rootScope, $appbase, $routeParams, data) {
     "use strict";
     // Check if the session is properly initiated,
     // i.e. the 'data' factory set the flag 'initComplete' in userSession.
@@ -176,16 +178,15 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
     $rootScope.showNav();
 
     // Get __feed__ from route parameters.
-    var feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed,
-      usrRef = Appbase.ref('user/' + userSession.getUser() + '/following');
+    var feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed;
     $scope.tweetsDisplayed = 15;
     $scope.peopleDisplayed = 8;
     $scope.userName = userSession.getUser();
     $scope.gotoProfile = $rootScope.gotoProfile;
     // Show _People on Twitter_, user's _Followers_ and _Followings_.
-    $appbaseRef(data.refs.allUsers).$bindEdges($scope,'people', false, false, {}, true);
-    $appbaseRef(data.refs.usersFollowers).$bindEdges($scope, 'followers');
-    $appbaseRef(data.refs.usersFollowing).$bindEdges($scope, 'following');
+    $scope.people = data.refs.allUsers.bindEdges($scope, {}, true);
+    $scope.followers = data.refs.usersFollowers.bindEdges($scope);
+    $scope.following = data.refs.usersFollowing.bindEdges($scope);
 
     // Called when user posts a new tweet.
     $scope.addTweet = function () {
@@ -194,28 +195,28 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
     };
     if (feed === 'global') {
       // Show all tweets.
-      $appbaseRef(data.refs.globalTweets).$bindEdges($scope,'tweets', false, false, {}, true);
+      $scope.tweets = data.refs.globalTweets.bindEdges($scope,{}, true);
     } else {
       // Fetch tweets of the people followed by the user. Every following's tweets are pushed into `arraysOfTweets` as an array,
       // and in the end, these arrays are merged into personalTweets by calling `personalTweets.concat.apply(personalTweets, arraysOfTweets)`
       // in _home.html_.
       $scope.personalTweets = [];
       $scope.arraysOfTweets = [];
-      $scope.arraysOfTweets.push($appbaseRef('user/' + userSession.getUser() + '/tweets').$bindEdges($scope));
-      usrRef.on('edge_added', function (error, followUserRef) {
+      $scope.arraysOfTweets.push(data.refs.usersTweets.bindEdges($scope));
+      data.refs.usersFollowing.on('edge_added', function (error, followUserRef) {
         if (error) {throw error; }
-        $scope.arraysOfTweets.push($appbaseRef(followUserRef).$outVertex('tweets').$bindEdges($scope));
+        $scope.arraysOfTweets.push(followUserRef.outVertex('tweets').bindEdges($scope));
       });
       $scope.$on('$destroy', function () {
         // Stop listening to user's followings when the view is destroyed.
-        usrRef.off();
+        data.refs.usersFollowing.off();
       });
     }
   })
   // **Controller: profile**.
   // Where a user's followings, followers and tweets are shown.
   // A user can also see other's profiles and choose to follow/unfollow the person from his/her profile.
-  .controller('profile', function ($scope, userSession, $rootScope, $routeParams, $appbaseRef, data) {
+  .controller('profile', function ($scope, userSession, $rootScope, $routeParams, $appbase, data) {
     "use strict";
     var notLoggedIn;
     if (!userSession.initComplete) {
@@ -265,18 +266,18 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
       $scope.msg = '';
     };
     // Fetch user's followers, followings and tweets.
-    $appbaseRef('user/' + userId + '/followers').$bindEdges($scope, 'followers');
-    $appbaseRef('user/' + userId + '/following').$bindEdges($scope, 'following');
-    $appbaseRef('user/' + userId + '/tweets').$bindEdges($scope, 'tweets');
+    $scope.followers = $appbase.ns('user').v(userId + '/followers').bindEdges($scope);
+    $scope.following = $appbase.ns('user').v(userId + '/following').bindEdges($scope);
+    $scope.tweets = $appbase.ns('user').v(userId + '/tweets').bindEdges($scope);
   })
   // **Factory: data**.
   //Stores frequently useful Appbase references and interacts with Appbase for data needs
-  .factory('data', function (userSession) {
+  .factory('data', function (userSession, $appbase) {
     "use strict";
     // Appbase references
     var refs = {
-      globalTweets: Appbase.ref('global/tweets'),
-      allUsers: Appbase.ref('global/users')
+      globalTweets: $appbase.ns('global').v('tweets'),
+      allUsers: $appbase.ns('global').v('users')
     }, data = {  // Factory to be exported
       refs: refs
     };
@@ -284,7 +285,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
     // It sets required references and creates basic data for a new user.
     data.init = function (ready) {
       var userId = userSession.getUser();
-      refs.user = Appbase.create('user', userSession.getUser());
+      refs.user = $appbase.ns('user').v(userSession.getUser());
       refs.usersTweets = refs.user.outVertex('tweets');
       refs.usersFollowers = refs.user.outVertex('followers');
       refs.usersFollowing = refs.user.outVertex('following');
@@ -297,7 +298,7 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
                 if(bool) {
                   callback();
                 } else {
-                  ref.setEdge(edgeRef || Appbase.create('misc', Appbase.uuid()), edgeName, function (error) {
+                  ref.setEdge(edgeName, edgeRef || $appbase.ns('misc').v($appbase.uuid()), function (error) {
                     if (error) callback(error);
                     checkAndCreate();
                   });
@@ -335,14 +336,14 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
     };
     data.addTweet = function (msg) {
       //Create a new 'tweet' vertex and store the tweet message
-      var tweetRef = Appbase.create('tweet', Appbase.uuid());
+      var tweetRef = $appbase.ns('tweet').v($appbase.uuid());
       tweetRef.setData({ 'msg': msg, 'by': userSession.getUser() }, function (error, tweetRef) {
         if (error) {throw error; }
         // Add this tweet as an edge, in user's own tweets and global tweets.
         // We really don't care about the edge's name here
-        var randomEdgeName = Appbase.uuid();
-        refs.usersTweets.setEdge(tweetRef, randomEdgeName);
-        refs.globalTweets.setEdge(tweetRef, randomEdgeName);
+        var randomEdgeName = $appbase.uuid();
+        refs.usersTweets.setEdge(randomEdgeName, tweetRef);
+        refs.globalTweets.setEdge(randomEdgeName, tweetRef);
       });
     };
     // Checks whether provided userId is being followed by the logged in user
@@ -353,12 +354,12 @@ angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat'])
       });
     };
     data.follow = function (userId) {
-      refs.usersFollowing.setEdge(Appbase.ref('user/' + userId), userId);
-      Appbase.ref('user/' + userId + '/followers').setEdge(refs.user, userSession.getUser());
+      refs.usersFollowing.setEdge(userId, $appbase.ns('user').v(userId));
+      $appbase.ns('user').v(userId + '/followers').setEdge(userSession.getUser(), refs.user);
     };
     data.unFollow = function (userId) {
       refs.usersFollowing.removeEdge(userId);
-      Appbase.ref('user/' + userId + '/followers').removeEdge(userSession.getUser());
+      $appbase.ns('user').v(userId + '/followers').removeEdge(userSession.getUser());
     };
     return data;
   })
