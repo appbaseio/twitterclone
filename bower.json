@@ -1,0 +1,7 @@
+{
+  "name": "TwitterAppbase",
+  "private": true,
+  "dependencies": {
+    "appbase-js": "latest"
+   }
+}
