@@ -2,6 +2,6 @@
   "name": "TwitterAppbase",
   "private": true,
   "dependencies": {
-    "appbase-js": "latest"
-   }
+    "appbase-js": "~0.9.0"
+  }
 }

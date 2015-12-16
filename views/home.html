@@ -26,7 +26,7 @@
                                     <div class="panel-body" style="padding: 5px !important">
                                         <ul class="list-group" vs-repeat style="max-height: 300px; overflow-y: auto;margin: 0px;"  when-scrolled="peopleDisplayed = peopleDisplayed + 8;">
                                             <li ng-repeat='person in people | limitTo:peopleDisplayed' class="list-group-item" style="width: 100%"> <!--ng-repeat-->
-                                                <button ng-click="gotoProfile(person.properties.name)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{person.properties.name}}</button>
+                                                <button ng-click="gotoProfile(person._source.name)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{person._source.name}}</button>
                                             </li>
                                         </ul>
                                     </div>
@@ -57,16 +57,17 @@
                         <input class="input-sm" id="tweet_input" type="text" required ng-model='msg' placeholder="Your tweet here!"  style="width: 85%;border: 1px solid grey;height: 40px !important;font-size: 1.2em">
                         <button type="submit" class="btn btn-primary btn-sm pull-right" style="font-size: 1.2em;height: 40px !important;" id="tweetButton">Tweet</button>
                     </form >
-                    <ul ng-show="tweets !== undefined" class="list-group" id="tweetstream" style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
-                        <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed" style="width: 100%">
-                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
+                    <ul ng-show="feed == 'global'" class="list-group" id="tweetstream" style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
+                        <li class="list-group-item" ng-repeat="tweet in tweets | limitTo:tweetsDisplayed  | orderBy:'_source.createdAt':true" style="width: 100%">
+                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span></h4>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
                         </li>
                     </ul>
-                    <ul ng-show="personalTweets !== undefined" class="list-group" style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
-                        <li class="list-group-item" ng-repeat="tweet in personalTweets.concat.apply(personalTweets, arraysOfTweets)  | orderBy:'priority':true" style="width: 100%">
-                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet.properties.by)" style="cursor:pointer">{{tweet.properties.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                            <p class="list-group-item-text" ng-bind-html="urlify(tweet.properties.msg)"></p>
+                    <ul ng-show="feed == 'personal'" class="list-group" style="height: 75vh; overflow: auto" when-scrolled="tweetsDisplayed = tweetsDisplayed + 15;">
+                        <!-- <li class="list-group-item" ng-repeat="tweet in personalTweets.concat.apply(personalTweets, arraysOfTweets)  | orderBy:'priority':true" style="width: 100%"> -->
+                        <li class="list-group-item" ng-repeat="tweet in personalTweets  | orderBy:'_source.createdAt':true" style="width: 100%">
+                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span></h4>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
                         </li>
                     </ul>
                 </div>

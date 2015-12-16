@@ -31,6 +31,7 @@
     "commit": "a4c095a5a8513305426861a3c6a61f4eb8334b75"
   },
   "_source": "git://github.com/appbaseio/appbase-js.git",
-  "_target": "*",
-  "_originalSource": "appbase-js"
+  "_target": "~0.9.0",
+  "_originalSource": "appbase-js",
+  "_direct": true
 }

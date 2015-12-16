@@ -2,7 +2,7 @@ var app = angular.module('twitter');
   // **Controller: global**.
   // Show all tweets when no one is logged in.
 
-app.controller('global', function ($scope, userSession, $location, $rootScope, $appbase, data) {
+app.controller('global', function ($scope, userSession, $location, $rootScope, data) {
     "use strict";
     // Hide *navbar* if no one is logged in
     $rootScope.hideNav();
@@ -19,6 +19,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     $scope.tweets = data.refs.globalTweets.bindEdges($scope);
     $scope.tweetsDisplayed = 8;
   })
+
   // **Controller: search**.
   // Search's for tweets in Appbase and shows results.
     .controller('search', function ($scope, $rootScope, $routeParams, $appbase) {

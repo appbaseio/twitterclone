@@ -12,9 +12,9 @@
                             <div class="container" style="max-width: 273px; max-height: 205px; overflow-y: auto;padding: 0px;">
                                 <div class="panel-body" style="padding:5px !important">
                                     <ul class="list-group" style="margin: 0px;">
-                                        <li ng-repeat="f in following" class="list-group-item"> <!--ng-repeat-->
-                                            <button ng-click="gotoProfile(f.properties.name)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f.properties.name}}</button>
-                                            <button ng-show="isMe" ng-click="unFollow(f.properties.name,$index)" class="btn btn-danger btn-sm pull-right">Unfollow</button>
+                                        <li ng-repeat="f in personalInfo[0]._source.following" class="list-group-item"> <!--ng-repeat-->
+                                            <button ng-click="gotoProfile(f)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f}}</button>
+                                            <button ng-show="isMe && isReady" ng-click="unFollow(f,$index)" class="btn btn-danger btn-sm pull-right">Unfollow</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -48,8 +48,9 @@
                             <div class="container" style="max-width: 273px; max-height: 205px !important; overflow-y: auto;padding: 0px;">
                                 <div class="panel-body" style="padding: 5px !important;">
                                     <ul class="list-group" style="margin: 0px;">
-                                        <li ng-repeat="f in followers" class="list-group-item"> <!--ng-repeat-->
-                                            <button ng-click="gotoProfile(f.properties.name)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f.properties.name}}</button>
+                                        <li ng-repeat="f in personalInfo[0]._source.followers"
+                                         class="list-group-item"> <!--ng-repeat-->
+                                            <button ng-click="gotoProfile(f)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f}}</button>
 
                                         </li>
                                     </ul>
@@ -69,7 +70,7 @@
                           </a>
                           <div class="media-body" style="padding: 2%;">
                             <h1 class="media-heading" style="margin-bottom: 6%;">{{userName}}</h1>
-                            <button ng-show="!isMe && isReady && !isBeingFollowed " ng-click="follow(userId)" class="btn btn-primary btn-sm pull-right">Follow</button>
+                            <button ng-show="!isMe && isReady && !isBeingFollowed" ng-click="follow(userId)" class="btn btn-primary btn-sm pull-right">Follow</button>
                             <button ng-show="!isMe && isReady && isBeingFollowed" ng-click="unFollow(userId)" class="btn btn-danger btn-sm pull-right">Unfollow</button>
                             <span class="label label-info" style="font-size: 1.2em;">Followers {{followers.length}}</span>
                             <span class="label label-info" style="font-size: 1.2em;">Following {{following.length}}</span>
@@ -86,10 +87,10 @@
                 <div class="container" style="max-width: 100%; height: 250px; overflow-y: auto;">
                     <div class="row">
                         <ul class="list-group" id="tweetstream">
-                            <li class="list-group-item" ng-repeat="tweet in tweets  | orderBy:'priority':true"> <!--ng-repeat-->
-                                <h4 class="list-group-item-heading">{{tweet.properties.by}} <span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{convertToVisibleTime(tweet.priority)}}</span></h4>
-                                <p class="list-group-item-text">{{tweet.properties.msg}}</p>
-                            </li>
+                           <li class="list-group-item" ng-repeat="tweet in personalTweets  | orderBy:'_source.createdAt':true" style="width: 100%">
+                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span></h4>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
+                        </li>
 
                         </ul>
                     </div>
