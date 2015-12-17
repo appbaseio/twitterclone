@@ -23,7 +23,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     //Show all tweets under *global/tweets* using ``searchStream``, in reverse order of their created date.
     var bodyObj =  {
       query:  {match_all: {}},
-      size:10,
+      size:$rootScope.tweetSize,
       from:0,
       sort:{
         "createdAt":"desc"
@@ -80,7 +80,15 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
       tweetService.personalTweet(userSession.getUser());
     }
     // Show _People on Twitter.
-    appbaseService.getBundleData('users', 'people');    
+    var bodyObj =  {
+      query:  {match_all: {}},
+      size:$rootScope.userSize,
+      from:0,
+      sort:{
+        "createdAt":"desc"
+      }
+    };
+    appbaseService.getBundleData('users', 'people', bodyObj);    
     // Called when user posts a new tweet.
     $scope.addTweet = function () {
       tweetService.addTweet($scope.msg);

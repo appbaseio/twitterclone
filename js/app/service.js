@@ -8,6 +8,8 @@
                 username: 'Sr5kpImw8',
                 password: 'a7fbd1d3-736b-4f36-b2bd-9486a4f10617'
             });
+            $rootScope.tweetSize = 10;
+            $rootScope.userSize = 10;
         })
         //Creat the 'appbase-service' to use in global
         .service('appbaseService', function($rootScope, $timeout) {
@@ -102,7 +104,7 @@
                                 by: person
                             }
                         },
-                        size:10,
+                        size:$rootScope.tweetSize,
                         from:0,
                           sort:{
                             "createdAt":"desc"
@@ -117,9 +119,7 @@
                             term: {
                                 name: person
                             }
-                        },
-                        size:10,
-                        from:0
+                        }
                 }
                 $rootScope.personalInfo = {};
                 appbaseService.getBundleData('users', 'personalInfo', searchQuery, callback);
@@ -145,7 +145,7 @@
                                 fields: ["msg"]
                             }
                         },
-                        size:10,
+                        size:$rootScope.tweetSize,
                         from:0
                 };
                 appbaseService.getBundleData('tweets', 'searchTweets', searchQuery_tweets);
@@ -158,7 +158,7 @@
                                 fields: ["name"]
                             }
                         },
-                        size:10,
+                        size:$rootScope.userSize,
                         from:0
                 };
                 appbaseService.getBundleData('users', 'searchUsers', searchQuery_users);
@@ -226,7 +226,7 @@
                 return localStorage.getItem("currentLoggedInUser");
             };
             return userSession;
-        });
+        })
 })();
 
 Array.prototype.remove = function() {
