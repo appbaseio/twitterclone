@@ -7,8 +7,8 @@
                         <div class="row" style="text-align: center;">
                             <img class="media-object" src="./img/user@2x.png" style="width: 35%;margin: auto">
                             <h3 style="margin-top: 10px;">{{myself._source.name}}</h3>
-                            <span class="label label-info pull-left" style="width: 45% !important;font-size: 1em;">Followers {{followers.length}}</span>
-                            <span class="label label-info pull-right" style="width: 45% !important;font-size: 1em;">Following {{following.length}}</span>
+                            <span class="label label-info pull-left" style="width: 45% !important;font-size: 1em;">Followers {{myself._source.followers.length}}</span>
+                            <span class="label label-info pull-right" style="width: 45% !important;font-size: 1em;">Following {{myself._source.following.length}}</span>
                             <style type="text/css">
                             *{
                                 /*border: 1px solid red;*/
@@ -24,8 +24,8 @@
                                 </div>
                                 <div class="container" style="max-width: 273px; padding: 0px;">
                                     <div class="panel-body" style="padding: 5px !important">
-                                        <ul class="list-group" vs-repeat style="max-height: 300px; overflow-y: auto;margin: 0px;"  when-scrolled="peopleDisplayed = peopleDisplayed + 8;">
-                                            <li ng-repeat='person in people' class="list-group-item" style="width: 100%"> <!--ng-repeat-->
+                                        <ul class="list-group" vs-repeat style="max-height: 300px; overflow-y: auto;margin: 0px;"   scroll-down="users">
+                                            <li ng-repeat="person in users.hits.hits | orderBy:'_source.createdAt':true" class="list-group-item" style="width: 100%">
                                                 <button ng-click="gotoProfile(person._source.name)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{person._source.name}}</button>
                                             </li>
                                         </ul>

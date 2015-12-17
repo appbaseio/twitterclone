@@ -12,7 +12,7 @@
                             <div class="container" style="max-width: 273px; max-height: 205px; overflow-y: auto;padding: 0px;">
                                 <div class="panel-body" style="padding:5px !important">
                                     <ul class="list-group" style="margin: 0px;">
-                                        <li ng-repeat="f in personalInfo[0]._source.following" class="list-group-item"> <!--ng-repeat-->
+                                        <li ng-repeat="f in personalInfo.hits.hits[0]._source.following" class="list-group-item"> <!--ng-repeat-->
                                             <button ng-click="gotoProfile(f)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f}}</button>
                                             <button ng-show="isMe && isReady" ng-click="unFollow(f,$index)" class="btn btn-danger btn-sm pull-right">Unfollow</button>
                                         </li>
@@ -48,7 +48,7 @@
                             <div class="container" style="max-width: 273px; max-height: 205px !important; overflow-y: auto;padding: 0px;">
                                 <div class="panel-body" style="padding: 5px !important;">
                                     <ul class="list-group" style="margin: 0px;">
-                                        <li ng-repeat="f in personalInfo[0]._source.followers"
+                                        <li ng-repeat="f in personalInfo.hits.hits[0]._source.followers"
                                          class="list-group-item"> <!--ng-repeat-->
                                             <button ng-click="gotoProfile(f)" class="btn btn-primary btn-sm" style="background: transparent;color:black;border: 0px;">{{f}}</button>
 
@@ -72,8 +72,8 @@
                             <h1 class="media-heading" style="margin-bottom: 6%;">{{userName}}</h1>
                             <button ng-show="!isMe && isReady && !isBeingFollowed" ng-click="follow(userId)" class="btn btn-primary btn-sm pull-right">Follow</button>
                             <button ng-show="!isMe && isReady && isBeingFollowed" ng-click="unFollow(userId)" class="btn btn-danger btn-sm pull-right">Unfollow</button>
-                            <span class="label label-info" style="font-size: 1.2em;">Followers {{followers.length}}</span>
-                            <span class="label label-info" style="font-size: 1.2em;">Following {{following.length}}</span>
+                            <span class="label label-info" style="font-size: 1.2em;">Followers {{personalInfo.hits.hits[0]._source.followers.length}}</span>
+                            <span class="label label-info" style="font-size: 1.2em;">Following {{personalInfo.hits.hits[0]._source.following.length}}</span>
                           </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                         <button type="submit" class="btn btn-primary btn-sm pull-right" style="font-size: 1.2em;height: 40px !important;" id="tweetButton">Tweet</button>
                        </form >
                 </div>
-                <div class="container" style="max-width: 100%; height: 250px; overflow-y: auto;">
+                <div class="container" style="max-width: 100%;">
                     <div class="row" data-ng-include src="'views/tweet.html'">            
                     </div>
                 </div>

@@ -5,11 +5,14 @@
             $rootScope.appbaseRef = new Appbase({
                 url: 'https://scalr.api.appbase.io',
                 appname: 'twitter',
-                username: 'Sr5kpImw8',
-                password: 'a7fbd1d3-736b-4f36-b2bd-9486a4f10617'
+                username: '6HVI9SUIr',
+                password: 'e601d171-dd83-48f0-8e8a-1cf06414ce69'
             });
-            $rootScope.tweetSize = 10;
-            $rootScope.userSize = 10;
+            $rootScope.setRequestInfo = function() {
+                $rootScope.RequestParam = {};
+                $rootScope.defaultSize = 10;
+            };
+            $rootScope.setRequestInfo();
         })
         //Creat the 'appbase-service' to use in global
         .service('appbaseService', function($rootScope, $timeout) {
@@ -61,21 +64,28 @@
                 });
                 return appbaseObj;
             };
-            methods.getBundleData = function(type, variable, bodyObj, callback) {
+            methods.getBundleData = function(variable, type, bodyObj, callback) {
                 var defaultBodyObj = {
-                        query:  {match_all: {}},
-                        size:10,
-                        from:0
+                    query: {
+                        match_all: {}
+                    },
+                    size: $rootScope.defaultSize,
+                    from: 0
                 };
                 var bodyObj = typeof bodyObj == 'undefined' ? defaultBodyObj : bodyObj;
                 methods.search(type, bodyObj).on('data', function(data) {
                     $timeout(function() {
-                        $rootScope[variable] = data.hits.hits;
+                        $rootScope[variable] = data;
                         if (callback)
                             callback();
                         methods.searchStream(type, bodyObj).on('data', function(data2) {
                             $timeout(function() {
-                                $rootScope[variable].unshift(data2);
+                                if(typeof $rootScope[variable] != 'undefined'){
+                                    $rootScope[variable].hits.hits.unshift(data2);
+                                }
+                                else{
+                                    $rootScope[variable] = {hits:{hits:[data2]}};   
+                                }
                             });
                         }).on('error', function(data) {
                             console.log(data);
@@ -97,71 +107,179 @@
                     createdAt: new Date()
                 });
             }
-            methods.personalTweet = function(person) {
-                var searchQuery = {
-                        query:  {
-                            term: {
-                                by: person
-                            }
-                        },
-                        size:$rootScope.tweetSize,
-                        from:0,
-                          sort:{
-                            "createdAt":"desc"
-                        }
-                };
-                $rootScope.personalTweets = [];
-                appbaseService.getBundleData('tweets', 'personalTweets', searchQuery)
-            }
-            methods.personalInfo = function(person, callback) {
-                var searchQuery = {
-                        query:  {
-                            term: {
-                                name: person
-                            }
-                        }
+            methods.globalTweet = function(relatedVariable, step) {
+                if(step == 'initialize'){
+                    $rootScope.RequestParam[relatedVariable] = {
+                        size:$rootScope.defaultSize,
+                        from:0
+                    };
                 }
-                $rootScope.personalInfo = {};
-                appbaseService.getBundleData('users', 'personalInfo', searchQuery, callback);
+                var searchQuery = {
+                  query:  {match_all: {}},
+                  size:$rootScope.RequestParam[relatedVariable].size,
+                  from:$rootScope.RequestParam[relatedVariable].from,
+                  sort:{
+                    "createdAt":"desc"
+                  }
+                };
+                if(step == 'initialize'){
+                    appbaseService.getBundleData(relatedVariable, 'tweets', searchQuery);
+                }
+                else if(step == 'scroll'){
+                    appbaseService.search('tweets', searchQuery).on('data', function(data) {
+                        $timeout(function() {
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }
+            methods.personalTweet = function(relatedVariable, person, step) {
+                if(step == 'initialize'){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        from:0
+                    };
+                }
+                var searchQuery = {
+                    query: {
+                        term: {
+                            by: person
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    from: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        "createdAt": "desc"
+                    }
+                };
+                if(step == 'initialize'){
+                    appbaseService.getBundleData(relatedVariable, 'tweets', searchQuery);
+                }
+                else if(step == 'scroll'){
+                    appbaseService.search('tweets', searchQuery).on('data', function(data) {
+                        $timeout(function() {
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }
+            methods.searchTweet = function(relatedVariable, text, step) {
+                if(step == 'initialize'){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        from:0
+                    };
+                }
+                var searchQuery = {
+                    query: {
+                        multi_match: {
+                            query: text,
+                            operator: "and",
+                            fuzziness: "auto",
+                            fields: ["msg"]
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    from: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        "createdAt": "desc"
+                    }
+                };
+                if(step == 'initialize'){
+                    appbaseService.getBundleData(relatedVariable, 'tweets', searchQuery);
+                }
+                else if(step == 'scroll'){
+                    appbaseService.search('tweets', searchQuery).on('data', function(data) {
+                        $timeout(function() {
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }
+             methods.user = function(relatedVariable, step) {
+                if(step == 'initialize'){
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        from:0
+                    };
+                }
+                var searchQuery = {
+                  query:  {match_all: {}},
+                  size:$rootScope.RequestParam[relatedVariable].size,
+                  from:$rootScope.RequestParam[relatedVariable].from,
+                  sort:{
+                    "createdAt":"desc"
+                  }
+                };
+                if(step == 'initialize'){
+                    appbaseService.getBundleData(relatedVariable, 'users', searchQuery);
+                }
+                else if(step == 'scroll'){
+                    appbaseService.search('users', searchQuery).on('data', function(data) {
+                        $timeout(function() {
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }
+             methods.searchUser = function(relatedVariable, text, step) {
+                 if(step == 'initialize'){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] = {
+                        size:$rootScope.defaultSize,
+                        from:0
+                    };
+                }
+                var searchQuery = {
+                    query: {
+                        multi_match: {
+                            query: text,
+                            operator: "and",
+                            fuzziness: "auto",
+                            fields: ["name"]
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    from: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        "createdAt": "desc"
+                    }
+                };
+                if(step == 'initialize'){
+                    appbaseService.getBundleData(relatedVariable, 'users', searchQuery);
+                }
+                else if(step == 'scroll'){
+                    appbaseService.search('users', searchQuery).on('data', function(data) {
+                        $timeout(function() {
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }
+            methods.personalInfo = function(relatedVariable, person, callback) {
+                var searchQuery = {
+                    query: {
+                        term: {
+                            name: person
+                        }
+                    }
+                }
+                $rootScope[relatedVariable] = {};
+                appbaseService.getBundleData(relatedVariable, 'users', searchQuery, callback);
             }
             methods.followFunction = function(userId, follow) {
+                $rootScope.personalInfoSingle = $rootScope.personalInfo.hits.hits[0];
                 if (follow) {
-                    $rootScope.personalInfo[0]._source.followers.push($rootScope.myself._source.name);
+                    $rootScope.personalInfoSingle._source.followers.push($rootScope.myself._source.name);
                     $rootScope.myself._source.following.push(userId);
                 } else {
-                    $rootScope.personalInfo[0]._source.followers.remove($rootScope.myself._source.name);
+                    $rootScope.personalInfoSingle._source.followers.remove($rootScope.myself._source.name);
                     $rootScope.myself._source.following.remove(userId);
                 }
-                appbaseService.update('users', $rootScope.personalInfo[0]._source, $rootScope.personalInfo[0]._id);
+                appbaseService.update('users', $rootScope.personalInfoSingle._source, $rootScope.personalInfoSingle._id);
                 appbaseService.update('users', $rootScope.myself._source, $rootScope.myself._id);
-            }
-            methods.searchText = function(text) {
-                var searchQuery_tweets = {
-                        query:  {
-                             multi_match: {
-                                query: text,
-                                operator: "and",
-                                fuzziness: "auto",
-                                fields: ["msg"]
-                            }
-                        },
-                        size:$rootScope.tweetSize,
-                        from:0
-                };
-                appbaseService.getBundleData('tweets', 'searchTweets', searchQuery_tweets);
-                var searchQuery_users = {
-                        query:  {
-                             multi_match: {
-                                query: text,
-                                operator: "and",
-                                fuzziness: "auto",
-                                fields: ["name"]
-                            }
-                        },
-                        size:$rootScope.userSize,
-                        from:0
-                };
-                appbaseService.getBundleData('users', 'searchUsers', searchQuery_users);
             }
             return methods;
         })
@@ -173,11 +291,11 @@
                 //check if user is already exists
                 var loginObj = {};
                 loginObj.checkUser = appbaseService.search('users', {
-                        query:{
-                            term: {
-                                name: userSession.getUser()
-                            }
+                    query: {
+                        term: {
+                            name: userSession.getUser()
                         }
+                    }
                 });
 
 
@@ -198,7 +316,8 @@
                         var userObj = {
                             name: userSession.getUser(),
                             followers: [],
-                            following: []
+                            following: [],
+                            createdAt: new Date()
                         };
                         loginObj.appbaseLogin = appbaseService.index('users', userObj);
                         loginObj.appbaseLogin.on('data', function(data) {
@@ -227,6 +346,35 @@
             };
             return userSession;
         })
+        .directive('scrollDown', function($rootScope, appbaseService, tweetService, $timeout) {
+            return function(scope, elm, attr) {
+                var raw = elm[0];
+                elm.bind('scroll', function() {
+                    if (raw.scrollTop + raw.offsetHeight + 1 >= raw.scrollHeight) { // + 1 added, as a workaround for: (raw.scrollTop + raw.offsetHeight- raw.scrollHeight) would always stop at -1.
+                        var type = attr.scrollDown;
+                        
+                        var totalFlag = $rootScope[type]['hits']['total'] > $rootScope[type]['hits']['hits'].length;
+                        if(totalFlag){
+                            $rootScope.RequestParam[type].from += $rootScope.RequestParam[type].size;
+                            switch (type) {
+                                case 'tweets':
+                                    tweetService.globalTweet(type, 'scroll');
+                                break;
+                                case 'personalTweets':
+                                    tweetService.personalTweet(type, $rootScope.currentPerson, 'scroll');
+                                break;
+                                case 'searchTweets':
+                                    tweetService.searchTweet(type, $rootScope.currentQuery,'scroll');
+                                break;
+                                case 'users':
+                                    tweetService.user(type, 'scroll');
+                                break;    
+                            }
+                        }
+                    }
+                });
+            };
+        });
 })();
 
 Array.prototype.remove = function() {

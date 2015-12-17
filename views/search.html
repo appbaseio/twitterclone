@@ -15,13 +15,23 @@
                 <div class="col-xs-offset-5">Searching for '{{currentQuery}}'</div>
                 <div class="col-md-6" style="min-height: 200px; max-height: 500px;">
                   <h3>Tweets</h3>
-                     <div data-ng-include src="'views/tweet.html'">            
+                     <div>
+                     <ul class="list-group" id="tweetstream" style="height: 75vh; overflow: auto" scroll-down="searchTweets">
+                        <li class="list-group-item" ng-repeat="tweet in searchTweets.hits.hits  track by $index | orderBy:'_source.createdAt':true" style="width: 100%">
+                            <h4 class="list-group-item-heading">
+                                <span data-ng-show="bahar">{{tweet._source.by}}</span>
+                                <a data-ng-hide="bahar" ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a>
+                                <span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span>
+                            </h4>
+                            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
+                        </li>
+                    </ul>            
                     </div>
                 </div>
-                <div class="col-md-6" style="min-height: 200px; max-height: 500px;">
+                <div class="col-md-6" style="height: 200px;">
                   <h3>Users</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="user in searchUsers"> <!--ng-repeat-->
+                    <ul class="list-group" style="height: 75vh; overflow: auto"  scroll-down="searchUsers">
+                        <li class="list-group-item" ng-repeat="user in searchUsers.hits.hits  track by $index | orderBy:'_source.createdAt':true"> <!--ng-repeat-->
                             <a><h4 ng-click="gotoProfile(user._source.name)" style="cursor:pointer" class="list-group-item-heading">{{user._source.name}}</h4></a>
                         </li>
                     </ul>

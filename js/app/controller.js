@@ -2,7 +2,7 @@ var app = angular.module('twitter');
   // **Controller: global**.
   // Show all tweets when no one is logged in.
 
-app.controller('global', function ($scope, userSession, $location, $rootScope, $timeout, appbaseService, loginService) {
+app.controller('global', function ($scope, userSession, $location, $rootScope, $timeout, appbaseService, loginService, tweetService) {
     "use strict";
     // Hide *navbar* if no one is logged in
     $rootScope.hideNav();
@@ -21,26 +21,18 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     // Checks if a user is already logged in the session.
     if ($scope.userId === userSession.getUser()) $scope.login();
     //Show all tweets under *global/tweets* using ``searchStream``, in reverse order of their created date.
-    var bodyObj =  {
-      query:  {match_all: {}},
-      size:$rootScope.tweetSize,
-      from:0,
-      sort:{
-        "createdAt":"desc"
-      }
-    };
-    appbaseService.getBundleData('tweets','tweets',bodyObj);
+    tweetService.globalTweet('tweets','initialize');
   })
 
   // **Controller: search**.
   // Search's for tweets in Appbase and shows results.
     .controller('search', function ($scope, $rootScope, $routeParams, appbaseService, tweetService) {
     "use strict";
-    $rootScope.feed = 'global';
     // Getting the 'query text' from route parameters.
-    $scope.currentQuery = $routeParams.text;
+    $rootScope.currentQuery = $routeParams.text;
     // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
-    tweetService.searchText($routeParams.text);
+    tweetService.searchTweet('searchTweets', $routeParams.text, 'initialize');
+    tweetService.searchUser('searchUsers', $routeParams.text, 'initialize');
   })
   // **Controller: navbar**.
   // Handles button clicks and visibility of buttons.
@@ -74,21 +66,15 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     }
 
     $rootScope.showNav();
+    $rootScope.currentPerson = userSession.getUser();
     // Get __feed__ from route parameters.
     $rootScope.feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed;
     if($rootScope.feed == 'personal'){
-      tweetService.personalTweet(userSession.getUser());
+      tweetService.personalTweet('personalTweets',$rootScope.currentPerson, 'initialize');
     }
     // Show _People on Twitter.
-    var bodyObj =  {
-      query:  {match_all: {}},
-      size:$rootScope.userSize,
-      from:0,
-      sort:{
-        "createdAt":"desc"
-      }
-    };
-    appbaseService.getBundleData('users', 'people', bodyObj);    
+       
+    tweetService.user('users','initialize');
     // Called when user posts a new tweet.
     $scope.addTweet = function () {
       tweetService.addTweet($scope.msg);
@@ -109,6 +95,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     // Get the userId from route params.
     var userId = $routeParams.userId;
     $scope.userId = $routeParams.userId;
+    $rootScope.currentPerson = userId;
     $rootScope.feed = 'personal';
     // Check whether this profile is of the logged in user.
     $scope.isMe = userSession.getUser() === userId;
@@ -132,10 +119,10 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     $scope.personalInfoCallback = function(){
       if(typeof $rootScope.myself != 'undefined'){
         $scope.isReady = true;
-        $rootScope.isBeingFollowed = $.inArray($rootScope.myself._source.name, $rootScope.personalInfo[0]._source.followers) == '-1' ? false : true; 
+        $rootScope.isBeingFollowed = $.inArray($rootScope.myself._source.name, $rootScope.personalInfo.hits.hits[0]._source.followers) == '-1' ? false : true; 
       }
     }
-    tweetService.personalTweet(userId);
-    tweetService.personalInfo(userId, $scope.personalInfoCallback);
+    tweetService.personalTweet('personalTweets',$rootScope.currentPerson, 'initialize');
+    tweetService.personalInfo('personalInfo', userId, $scope.personalInfoCallback);
   })
   
