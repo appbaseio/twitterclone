@@ -21,7 +21,15 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     // Checks if a user is already logged in the session.
     if ($scope.userId === userSession.getUser()) $scope.login();
     //Show all tweets under *global/tweets* using ``searchStream``, in reverse order of their created date.
-    appbaseService.getBundleData('tweets','tweets');
+    var bodyObj =  {
+      query:  {match_all: {}},
+      size:10,
+      from:0,
+      sort:{
+        "createdAt":"desc"
+      }
+    };
+    appbaseService.getBundleData('tweets','tweets',bodyObj);
   })
 
   // **Controller: search**.

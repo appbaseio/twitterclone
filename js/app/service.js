@@ -45,35 +45,33 @@
                 });
                 return appbaseObj;
             };
-            methods.search = function(type, queryString) {
+            methods.search = function(type, bodyObj) {
                 var appbaseObj = $rootScope.appbaseRef.search({
                     type: type,
-                    body: {
-                        query: queryString
-                    }
+                    body: bodyObj
                 });
                 return appbaseObj;
             };
-            methods.searchStream = function(type, queryString) {
-
+            methods.searchStream = function(type, bodyObj) {
                 var appbaseObj = $rootScope.appbaseRef.searchStream({
                     type: type,
-                    body: {
-                        query: queryString
-                    }
+                    body: bodyObj
                 });
                 return appbaseObj;
             };
-            methods.getBundleData = function(type, variable, searchQuery, callback) {
-                var searchQuery = typeof searchQuery == 'undefined' ? {
-                    match_all: {}
-                } : searchQuery;
-                methods.search(type, searchQuery).on('data', function(data) {
+            methods.getBundleData = function(type, variable, bodyObj, callback) {
+                var defaultBodyObj = {
+                        query:  {match_all: {}},
+                        size:10,
+                        from:0
+                };
+                var bodyObj = typeof bodyObj == 'undefined' ? defaultBodyObj : bodyObj;
+                methods.search(type, bodyObj).on('data', function(data) {
                     $timeout(function() {
                         $rootScope[variable] = data.hits.hits;
                         if (callback)
                             callback();
-                        methods.searchStream(type, searchQuery).on('data', function(data2) {
+                        methods.searchStream(type, bodyObj).on('data', function(data2) {
                             $timeout(function() {
                                 $rootScope[variable].unshift(data2);
                             });
@@ -99,19 +97,30 @@
             }
             methods.personalTweet = function(person) {
                 var searchQuery = {
-                    term: {
-                        by: person
-                    }
+                        query:  {
+                            term: {
+                                by: person
+                            }
+                        },
+                        size:10,
+                        from:0,
+                          sort:{
+                            "createdAt":"desc"
+                        }
                 };
                 $rootScope.personalTweets = [];
                 appbaseService.getBundleData('tweets', 'personalTweets', searchQuery)
             }
             methods.personalInfo = function(person, callback) {
                 var searchQuery = {
-                    term: {
-                        name: person
-                    }
-                };
+                        query:  {
+                            term: {
+                                name: person
+                            }
+                        },
+                        size:10,
+                        from:0
+                }
                 $rootScope.personalInfo = {};
                 appbaseService.getBundleData('users', 'personalInfo', searchQuery, callback);
             }
@@ -128,23 +137,29 @@
             }
             methods.searchText = function(text) {
                 var searchQuery_tweets = {
-
-                    multi_match: {
-                        query: text,
-                        operator: "and",
-                        fuzziness: "auto",
-                        fields: ["msg"]
-                    }
-
+                        query:  {
+                             multi_match: {
+                                query: text,
+                                operator: "and",
+                                fuzziness: "auto",
+                                fields: ["msg"]
+                            }
+                        },
+                        size:10,
+                        from:0
                 };
                 appbaseService.getBundleData('tweets', 'searchTweets', searchQuery_tweets);
                 var searchQuery_users = {
-                    multi_match: {
-                        query: text,
-                        operator: "and",
-                        fuzziness: "auto",
-                        fields: ["name"]
-                    }
+                        query:  {
+                             multi_match: {
+                                query: text,
+                                operator: "and",
+                                fuzziness: "auto",
+                                fields: ["name"]
+                            }
+                        },
+                        size:10,
+                        from:0
                 };
                 appbaseService.getBundleData('users', 'searchUsers', searchQuery_users);
             }
@@ -158,9 +173,11 @@
                 //check if user is already exists
                 var loginObj = {};
                 loginObj.checkUser = appbaseService.search('users', {
-                    term: {
-                        name: userSession.getUser()
-                    }
+                        query:{
+                            term: {
+                                name: userSession.getUser()
+                            }
+                        }
                 });
 
 
