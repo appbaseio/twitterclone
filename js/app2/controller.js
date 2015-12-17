@@ -28,31 +28,14 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
 
   // **Controller: search**.
   // Search's for tweets in Appbase and shows results.
-    .controller('search', function ($scope, $rootScope, $routeParams, $appbase) {
+    .controller('search', function ($scope, $rootScope, $routeParams, appbaseService, tweetService) {
     "use strict";
     // Getting the 'query text' from route parameters.
     $scope.currentQuery = $routeParams.text;
-        $scope.urlify = $rootScope.urlify;
+    $scope.urlify = $rootScope.urlify;
     // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
-    $appbase.ns('tweet').search({text: $routeParams.text, properties: ['msg']}, function (error, array) {
-      if (!error) {
-        $scope.tweets = array;
-        $scope.$apply();
-      }
-    });
-    $appbase.ns('tweet').search({text: $routeParams.text, properties: ['by']}, function (error, array) {
-      if (!error) {
-        $scope.users = [];
-        array.forEach(function(tweet) {
-          if($scope.users.indexOf(tweet.by) === -1) {
-            $scope.users.push(tweet.by);
-          }
-        })
-        $scope.$apply();
-      } else {
-        throw error
-      }
-    });
+    tweetService.searchText($routeParams.text);
+
   })
   // **Controller: Loading**.
   // It inits the __data__ factory, which is used everywhere in the app to fetch and set data from/to Appbase.

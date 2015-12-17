@@ -25,7 +25,7 @@
             methods.update = function(type, body, id) {
                 var appbaseObj = $rootScope.appbaseRef.index({
                     type: type,
-                    id:id,
+                    id: id,
                     body: body
                 });
                 return appbaseObj;
@@ -46,7 +46,7 @@
                 return appbaseObj;
             };
             methods.searchStream = function(type, queryString) {
-                
+
                 var appbaseObj = $rootScope.appbaseRef.searchStream({
                     type: type,
                     body: {
@@ -56,22 +56,24 @@
                 return appbaseObj;
             };
             methods.getBundleData = function(type, variable, searchQuery, callback) {
-                var searchQuery = typeof searchQuery == 'undefined' ? {match_all:{}} : searchQuery; 
-                
+                var searchQuery = typeof searchQuery == 'undefined' ? {
+                    match_all: {}
+                } : searchQuery;
+
                 methods.search(type, searchQuery).on('data', function(data) {
-                    $timeout(function(){
+                    $timeout(function() {
                         $rootScope[variable] = data.hits.hits;
-                        if(callback)
+                        if (callback)
                             callback();
                         methods.searchStream(type, searchQuery).on('data', function(data2) {
-                            $timeout(function(){
-                                $rootScope[variable].unshift(data2);                                
+                            $timeout(function() {
+                                $rootScope[variable].unshift(data2);
                             });
-                        }).on('error',function(data){
+                        }).on('error', function(data) {
                             console.log(data);
                         });
                     });
-                }).on('error',function(data){
+                }).on('error', function(data) {
                     console.log(data);
                 });
             };
@@ -85,34 +87,59 @@
                 appbaseService.index('tweets', {
                     by: userSession.getUser(),
                     msg: msg,
-                    createdAt:new Date()
+                    createdAt: new Date()
                 });
             }
-            methods.personalTweet = function(person){
+            methods.personalTweet = function(person) {
                 var searchQuery = {
-                    term :{by:person}
+                    term: {
+                        by: person
+                    }
                 };
                 $rootScope.personalTweets = [];
-                appbaseService.getBundleData('tweets','personalTweets',searchQuery)
+                appbaseService.getBundleData('tweets', 'personalTweets', searchQuery)
             }
-            methods.personalInfo = function(person, callback){
+            methods.personalInfo = function(person, callback) {
                 var searchQuery = {
-                    term :{name:person}
+                    term: {
+                        name: person
+                    }
                 };
                 $rootScope.personalInfo = {};
-                appbaseService.getBundleData('users','personalInfo',searchQuery, callback);
+                appbaseService.getBundleData('users', 'personalInfo', searchQuery, callback);
             }
-            methods.followFunction = function(userId, follow){
-                if(follow){
+            methods.followFunction = function(userId, follow) {
+                if (follow) {
                     $rootScope.personalInfo[0]._source.followers.push($rootScope.myself._source.name);
                     $rootScope.myself._source.following.push(userId);
-                }
-                else{
+                } else {
                     $rootScope.personalInfo[0]._source.followers.remove($rootScope.myself._source.name);
                     $rootScope.myself._source.following.remove(userId);
                 }
                 appbaseService.update('users', $rootScope.personalInfo[0]._source, $rootScope.personalInfo[0]._id);
                 appbaseService.update('users', $rootScope.myself._source, $rootScope.myself._id);
+            }
+            methods.searchText = function(text) {
+                var searchQuery_tweets = {
+                   
+                        multi_match: {
+                            query: text,
+                            operator: "and",
+                            fuzziness: "auto",
+                            fields: ["msg"]
+                        }
+                    
+                };
+                appbaseService.getBundleData('tweets', 'searchTweets', searchQuery_tweets);
+                var searchQuery_users = {
+                        multi_match: {
+                            query: text,
+                            operator: "and",
+                            fuzziness: "auto",
+                            fields: ["name"]
+                        }
+                };
+                appbaseService.getBundleData('users', 'searchUsers', searchQuery_users);
             }
             return methods;
         })
@@ -128,8 +155,8 @@
                     }
                 });
 
-            
-                loginObj.userSearch = function(callback){
+
+                loginObj.userSearch = function(callback) {
                     loginObj.checkUser.on('data', function(data) {
                         if (data.hits.hits.length) {
                             $rootScope.myself = data.hits.hits[0];
@@ -140,13 +167,13 @@
                     });
                 }
                 loginObj.userSearch(callback);
-                
+
                 loginObj.userIndex = function(callback) {
                     $timeout(function() {
                         var userObj = {
                             name: userSession.getUser(),
-                            followers:[],
-                            following:[]
+                            followers: [],
+                            following: []
                         };
                         loginObj.appbaseLogin = appbaseService.index('users', userObj);
                         loginObj.appbaseLogin.on('data', function(data) {
@@ -163,7 +190,9 @@
 })();
 
 Array.prototype.remove = function() {
-    var what, a = arguments, L = a.length, ax;
+    var what, a = arguments,
+        L = a.length,
+        ax;
     while (L && this.length) {
         what = a[--L];
         while ((ax = this.indexOf(what)) !== -1) {

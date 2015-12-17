@@ -53,10 +53,10 @@ app.run(function ($rootScope, userSession, $location, $interval) {
       controller: 'global',
       templateUrl: 'views/global.html'
     })
-    // .when('/search/:text', {
-    //     controller: 'search',
-    //     templateUrl: 'views/search.html'
-    //   })
+    .when('/search/:text', {
+        controller: 'search',
+        templateUrl: 'views/search.html'
+    })
     .when('/profile/:userId', {
       controller: 'profile',
       templateUrl: 'views/profile.html'
