@@ -1,20 +1,17 @@
 (function() {
     var app = angular.module('twitter')
         .run(function($rootScope, userSession, $location, $interval) {
+            //Set the credentials for 'appbase'
             $rootScope.appbaseRef = new Appbase({
                 url: 'https://scalr.api.appbase.io',
                 appname: 'twitter',
                 username: 'Sr5kpImw8',
                 password: 'a7fbd1d3-736b-4f36-b2bd-9486a4f10617'
             });
-            $rootScope.people = [];
-            $rootScope.tweets = [];
-            $rootScope.followers = [];
-            $rootScope.following = [];
         })
+        //Creat the 'appbase-service' to use in global
         .service('appbaseService', function($rootScope, $timeout) {
             var methods = {};
-
             methods.index = function(type, body) {
                 var appbaseObj = $rootScope.appbaseRef.index({
                     type: type,
@@ -30,11 +27,23 @@
                 });
                 return appbaseObj;
             };
-            methods.get = function(type) {
-
+            methods.get = function(type, queryString) {
+                var appbaseObj = $rootScope.appbaseRef.get({
+                    type: type,
+                    body: {
+                        query: queryString
+                    }
+                });
+                return appbaseObj;
             };
             methods.getStream = function() {
-
+                var appbaseObj = $rootScope.appbaseRef.get({
+                    type: type,
+                    body: {
+                        query: queryString
+                    }
+                });
+                return appbaseObj;
             };
             methods.search = function(type, queryString) {
                 var appbaseObj = $rootScope.appbaseRef.search({
@@ -59,7 +68,6 @@
                 var searchQuery = typeof searchQuery == 'undefined' ? {
                     match_all: {}
                 } : searchQuery;
-
                 methods.search(type, searchQuery).on('data', function(data) {
                     $timeout(function() {
                         $rootScope[variable] = data.hits.hits;
@@ -77,12 +85,11 @@
                     console.log(data);
                 });
             };
-
             return methods;
         })
+        //Create 'tweetService' for different functionality of tweets
         .service('tweetService', function($rootScope, $timeout, appbaseService, userSession) {
             var methods = {};
-
             methods.addTweet = function(msg) {
                 appbaseService.index('tweets', {
                     by: userSession.getUser(),
@@ -121,28 +128,29 @@
             }
             methods.searchText = function(text) {
                 var searchQuery_tweets = {
-                   
-                        multi_match: {
-                            query: text,
-                            operator: "and",
-                            fuzziness: "auto",
-                            fields: ["msg"]
-                        }
-                    
+
+                    multi_match: {
+                        query: text,
+                        operator: "and",
+                        fuzziness: "auto",
+                        fields: ["msg"]
+                    }
+
                 };
                 appbaseService.getBundleData('tweets', 'searchTweets', searchQuery_tweets);
                 var searchQuery_users = {
-                        multi_match: {
-                            query: text,
-                            operator: "and",
-                            fuzziness: "auto",
-                            fields: ["name"]
-                        }
+                    multi_match: {
+                        query: text,
+                        operator: "and",
+                        fuzziness: "auto",
+                        fields: ["name"]
+                    }
                 };
                 appbaseService.getBundleData('users', 'searchUsers', searchQuery_users);
             }
             return methods;
         })
+        //Create 'LoginService' - to check if user is already exists and if not create the user and logged him in
         .service('loginService', function($rootScope, $timeout, appbaseService, userSession) {
             var methods = {};
 
@@ -186,6 +194,21 @@
             }
 
             return methods;
+        })
+        // Stores logged in user's id.
+        .service('userSession', function() {
+            var userSession = {};
+            userSession.initComplete = false;
+            userSession.setUser = function(userId) {
+                localStorage.setItem("currentLoggedInUser", userId);
+            };
+            userSession.exit = function() {
+                localStorage.removeItem("currentLoggedInUser");
+            };
+            userSession.getUser = function() {
+                return localStorage.getItem("currentLoggedInUser");
+            };
+            return userSession;
         });
 })();
 

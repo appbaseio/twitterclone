@@ -30,7 +30,6 @@
             </div>
             <div class="navbar-collapse collapse" id="navbar-main">
                 <ul class="nav navbar-nav navbar-right">
-
                     <li><a><button ng-hide='bahar' ng-click='goHome("global")' type="button" class="btn btn-default form-control">Global feed</button></a></li>
                     <li><a><button ng-hide='bahar' ng-click='goHome("personal")' type="button" class="btn btn-default form-control">Personal feed</button></a></li>
                     <li><a><button ng-hide='bahar' ng-click='gotoProfile()' type="button" class="btn btn-primary form-control">Profile</button></a></li>
@@ -49,13 +48,11 @@
     <script src="js/angular-route.min.js" type="application/javascript"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/twitter.relative.time.min.js"></script>
-    <script src="//cdn.appbase.io/latest/appbase.js"></script>
-    <!-- <script src="bower_components/appbase-js/browser/appbase.js"></script> -->
-    <script src="//cdn.appbase.io/latest/ng-appbase.js"></script>
+    <script src="bower_components/appbase-js/browser/appbase.js"></script>
     <script src="js/angular-vs-repeat.min.js"></script>
     <script src="js/async.js"></script>
     <script src="js/app/config.js" type="application/javascript"></script>
-    <script src="js/app/factory.js" type="application/javascript"></script>
+    <script src="js/app/service.js" type="application/javascript"></script>
     <script src="js/app/controller.js" type="application/javascript"></script>
     // <script>
     //   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -65,8 +62,10 @@
 
     //   ga('create', 'UA-54082612-2', 'auto');
     //   ga('send', 'pageview');
-    // </script>
-    // <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-    // </script>
+    // 
+    </script>
+     <script>
+     // !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+     </script>
 </body>
 </html>

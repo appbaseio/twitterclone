@@ -1,12 +1,9 @@
-var app = angular.module('twitter', ['ngRoute', 'ngAppbase', 'ngSanitize', 'vs-repeat']);
-app.run(function ($rootScope, userSession, $location, $interval, $appbase) {
+var app = angular.module('twitter', ['ngRoute', 'ngSanitize', 'vs-repeat']);
+app.run(function ($rootScope, userSession, $location, $interval) {
     "use strict";
-  
-    // Provide the ``appname`` and ``appsecret`` as shown in your developer console.
-    $appbase.credentials("twitter", "2cac84749bc429ad7017bb1685eafaf4");
-  
     // Here **$rootScope** is used for
-    // changing the routes and managing visibility of navigation bar.
+    // changing the routes and managing visibility of navigation bar. 
+    $rootScope.bahar = true;
     $rootScope.exit = function () {
       userSession.exit();
       $location.path('/global');
@@ -21,16 +18,13 @@ app.run(function ($rootScope, userSession, $location, $interval, $appbase) {
       $location.path('/home/' + feed);
     };
     $rootScope.hideNav = function () {
-      $rootScope.$broadcast('hideNav', [1]);
+      $rootScope.bahar = true;
     };
     $rootScope.showNav = function () {
-      $rootScope.$broadcast('showNav');
+      $rootScope.bahar = false;
     };
     $rootScope.load = function () {
       $location.path('/loading');
-    };
-    $rootScope.convertToVisibleTime = function (timestamp) {
-      return new Date(timestamp).toTwitterRelativeTime();
     };
     $rootScope.urlify = function (text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -42,9 +36,6 @@ app.run(function ($rootScope, userSession, $location, $interval, $appbase) {
         return text;
       }
     };
-    $interval(function() {
-      //this interval causes causes a $digest cycle in angular, automatically updating all the timestamps for tweets
-    }, 60000)
   })
   // Code for route management.
   .config(function ($routeProvider) {
@@ -53,21 +44,19 @@ app.run(function ($rootScope, userSession, $location, $interval, $appbase) {
       controller: 'global',
       templateUrl: 'views/global.html'
     })
-    .when('/loading', {
-        controller: 'loading',
-        templateUrl: 'views/loading.html'
-      })
     .when('/search/:text', {
         controller: 'search',
         templateUrl: 'views/search.html'
-      }).when('/profile/:userId', {
-        controller: 'profile',
-        templateUrl: 'views/profile.html'
-      }).when('/home/:feed', {
-        controller: 'home',
-        templateUrl: 'views/home.html'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
+    })
+    .when('/profile/:userId', {
+      controller: 'profile',
+      templateUrl: 'views/profile.html'
+    })
+   .when('/home/:feed', {
+      controller: 'home',
+      templateUrl: 'views/home.html'
+    })
+    .otherwise({
+      redirectTo: '/'
+    });
   });
