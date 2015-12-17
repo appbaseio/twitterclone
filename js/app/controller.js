@@ -9,12 +9,14 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     $rootScope.feed = 'global';
     // Called when the user enters name or when already logged in.
     $scope.login = function () {
+      $scope.loading = true;
       userSession.setUser($scope.userId.replace(/ /g, "_"));
       loginService.init($scope.afterLogin)
     }
     $scope.afterLogin = function(){
       $timeout(function(){
         userSession.initComplete = true;
+        $scope.loading = false;
         $location.path('/home/personal');
       });
     }
