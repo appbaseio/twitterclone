@@ -6,6 +6,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     "use strict";
     // Hide *navbar* if no one is logged in
     $rootScope.hideNav();
+    $rootScope.feed = 'global';
     // Called when the user enters name or when already logged in.
     $scope.login = function () {
       userSession.setUser($scope.userId.replace(/ /g, "_"));
@@ -27,6 +28,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
   // Search's for tweets in Appbase and shows results.
     .controller('search', function ($scope, $rootScope, $routeParams, appbaseService, tweetService) {
     "use strict";
+    $rootScope.feed = 'global';
     // Getting the 'query text' from route parameters.
     $scope.currentQuery = $routeParams.text;
     // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
@@ -65,8 +67,8 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
 
     $rootScope.showNav();
     // Get __feed__ from route parameters.
-    $scope.feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed;
-    if($scope.feed == 'personal'){
+    $rootScope.feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed;
+    if($rootScope.feed == 'personal'){
       tweetService.personalTweet(userSession.getUser());
     }
     // Show _People on Twitter.
@@ -91,6 +93,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     // Get the userId from route params.
     var userId = $routeParams.userId;
     $scope.userId = $routeParams.userId;
+    $rootScope.feed = 'personal';
     // Check whether this profile is of the logged in user.
     $scope.isMe = userSession.getUser() === userId;
     $scope.userName = $routeParams.userId;

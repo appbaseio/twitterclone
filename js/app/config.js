@@ -4,6 +4,7 @@ app.run(function ($rootScope, userSession, $location, $interval) {
     // Here **$rootScope** is used for
     // changing the routes and managing visibility of navigation bar. 
     $rootScope.bahar = true;
+    $rootScope.feed = 'global';
     $rootScope.exit = function () {
       userSession.exit();
       $location.path('/global');

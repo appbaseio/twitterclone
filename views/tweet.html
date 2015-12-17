@@ -1,0 +1,23 @@
+<div ng-show="feed == 'global'">
+    <ul class="list-group" id="tweetstream" style="height: 75vh; overflow: auto">
+        <li class="list-group-item" ng-repeat="tweet in tweets | orderBy:'_source.createdAt':true" style="width: 100%">
+            <h4 class="list-group-item-heading">
+                <span data-ng-show="bahar">{{tweet._source.by}}</span>
+                <a data-ng-hide="bahar" ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a>
+                <span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span>
+            </h4>
+            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
+        </li>
+    </ul>
+</div>
+<div ng-show="feed == 'personal'">
+    <ul class="list-group" style="height: 75vh; overflow: auto">
+        <li class="list-group-item" ng-repeat="tweet in personalTweets | orderBy:'_source.createdAt':true" style="width: 100%">
+            <h4 class="list-group-item-heading">
+                <a ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a>
+                <span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span>
+            </h4>
+            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
+        </li>
+    </ul>
+</div>

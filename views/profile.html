@@ -85,14 +85,7 @@
                        </form >
                 </div>
                 <div class="container" style="max-width: 100%; height: 250px; overflow-y: auto;">
-                    <div class="row">
-                        <ul class="list-group" id="tweetstream">
-                           <li class="list-group-item" ng-repeat="tweet in personalTweets  | orderBy:'_source.createdAt':true" style="width: 100%">
-                            <h4 class="list-group-item-heading"><a ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a><span style="float:right;font-size:0.6em;font-weight:400;color:#999999">{{tweet._source.createdAt | date :"d-MMM 'at' h:mma"}}</span></h4>
-                            <p class="list-group-item-text" ng-bind-html="urlify(tweet._source.msg)"></p>
-                        </li>
-
-                        </ul>
+                    <div class="row" data-ng-include src="'views/tweet.html'">            
                     </div>
                 </div>
             </div>
