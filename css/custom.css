@@ -14,3 +14,14 @@
 #login{
 	position: relative;
 }
+.list-tweet li{
+    line-height: 0;
+}
+.list-tweet li .list-group-item:last-child{
+    margin-bottom: 0;
+    border-radius: 0;
+    border-bottom: 0;
+}
+.list-tweet li:last-child .list-group-item:last-child{
+    border-bottom: 1px solid #ddd;
+}
