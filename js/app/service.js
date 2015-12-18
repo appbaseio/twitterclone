@@ -78,7 +78,11 @@
                         $rootScope[variable] = data;
                         if (callback)
                             callback();
-                        methods.searchStream(type, bodyObj).on('data', function(data2) {
+                        
+                        if(typeof $rootScope[variable+'-stream'] != 'undefined'){
+                            $rootScope[variable+'-stream'].stop();
+                        }
+                        $rootScope[variable+'-stream'] = methods.searchStream(type, bodyObj).on('data', function(data2) {
                             $timeout(function() {
                                 if(typeof $rootScope[variable] != 'undefined'){
                                     $rootScope[variable].hits.hits.unshift(data2);
