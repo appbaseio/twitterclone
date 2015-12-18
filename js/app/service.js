@@ -374,6 +374,11 @@
                     }
                 });
             };
+        })
+        .filter('relativeTime',function(){
+            return function(timestamp) {
+                return new Date(timestamp).toTwitterRelativeTime();
+            };
         });
 })();
 
