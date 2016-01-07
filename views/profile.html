@@ -1,6 +1,13 @@
 
 <div class="container temp-container" style="padding-top: 70px">
-    <div>
+    <div data-ng-if="personalInfo.hits.hits.length == 0" class="alert alert-danger alert-dismissible fade in" role="alert">
+        <h4>User doesn't exist</h4>
+        <p>Sorry this user doesn't exists. You can go back to home page and visit the app.</a></p>
+        <p>
+            <a class="btn btn-default" href="#">Let's go to home page</a>
+        </p>
+    </div>
+    <div data-ng-if="personalInfo.hits.hits.length != 0">
         <div class="row">
             <div class="col-md-3 col-md-offset-1" style="padding-bottom: 50px">
                 <div class="container" style="max-width: 275px; height: 250px; overflow-y: hidden;">

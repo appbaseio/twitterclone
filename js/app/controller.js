@@ -120,8 +120,10 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     $scope.isReady = false;
     $scope.personalInfoCallback = function(){
       if(typeof $rootScope.myself != 'undefined'){
-        $scope.isReady = true;
-        $rootScope.isBeingFollowed = $.inArray($rootScope.myself._source.name, $rootScope.personalInfo.hits.hits[0]._source.followers) == '-1' ? false : true; 
+        if($rootScope.personalInfo.hits.hits.length){
+          $scope.isReady = true;
+          $rootScope.isBeingFollowed = $.inArray($rootScope.myself._source.name, $rootScope.personalInfo.hits.hits[0]._source.followers) == '-1' ? false : true; 
+        }
       }
     }
     tweetService.personalTweet('personalTweets',$rootScope.currentPerson, 'initialize');
