@@ -1,4 +1,5 @@
-<div data-ng-show="tweet._source.msg && tweet._source.msg != ''" class="list-group-item" style="width: 100%"> 
+ <!-- data-ng-show="tweet._source.msg && tweet._source.msg != ''" -->
+<div class="list-group-item" style="width: 100%"> 
 	 <h4 class="list-group-item-heading">
 	    <span data-ng-show="bahar">{{tweet._source.by}}</span>
 	    <a data-ng-hide="bahar" ng-click="gotoProfile(tweet._source.by)" style="cursor:pointer">{{tweet._source.by}}</a>

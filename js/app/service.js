@@ -10,7 +10,7 @@
             });
             $rootScope.setRequestInfo = function() {
                 $rootScope.RequestParam = {};
-                $rootScope.defaultSize = 10;
+                $rootScope.defaultSize = 30;
             };
             $rootScope.setRequestInfo();
         })
@@ -353,6 +353,7 @@
         .directive('scrollDown', function($rootScope, appbaseService, tweetService, $timeout) {
             return function(scope, elm, attr) {
                 var raw = elm[0];
+                console.log(raw.scrollHeight, raw.offsetHeight);
                 elm.bind('scroll', function() {
                     if (raw.scrollTop + raw.offsetHeight + 1 >= raw.scrollHeight) { // + 1 added, as a workaround for: (raw.scrollTop + raw.offsetHeight- raw.scrollHeight) would always stop at -1.
                         var type = attr.scrollDown;
