@@ -1,4 +1,4 @@
-[![Code Climate](https://codeclimate.com/github/appbaseio/twitter-appbase/badges/gpa.svg)](https://codeclimate.com/github/appbaseio/twitter-appbase)
+[![Code Climate](https://codeclimate.com/github/appbaseio/twitterclone/badges/gpa.svg)](https://codeclimate.com/github/appbaseio/twitterclone)
 
 ## How to run this locally:
 
