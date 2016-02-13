@@ -1,7 +1,6 @@
 var app = angular.module('twitter');
   // **Controller: global**.
   // Show all tweets when no one is logged in.
-
 app.controller('global', function ($scope, userSession, $location, $rootScope, $timeout, appbaseService, loginService, tweetService) {
     "use strict";
     // Hide *navbar* if no one is logged in
@@ -22,7 +21,8 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     }
     // Checks if a user is already logged in the session.
     if ($scope.userId === userSession.getUser()) $scope.login();
-    //Show all tweets under *global/tweets* using ``searchStream``, in reverse order of their created date.
+    // Show all tweets under *global/tweets* using ``searchStream``, in reverse order of their created date.
+    // Here we are using __tweetService__ and first argument is name of $rootscope variable, that we gonna use it in view
     tweetService.globalTweet('tweets','initialize');
   })
 
@@ -32,7 +32,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     "use strict";
     // Getting the 'query text' from route parameters.
     $rootScope.currentQuery = $routeParams.text;
-    // Searching in the namespace: __tweet__ for vertices, which contain 'query text' in the property: __msg__.
+    // Searching for tweets as well as users using the tweetService.
     tweetService.searchTweet('searchTweets', $routeParams.text, 'initialize');
     tweetService.searchUser('searchUsers', $routeParams.text, 'initialize');
   })
@@ -68,14 +68,15 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     }
 
     $rootScope.showNav();
+    // Get the logged in person from session using 'userSession' service
     $rootScope.currentPerson = userSession.getUser();
     // Get __feed__ from route parameters.
     $rootScope.feed = $routeParams.feed === undefined ? 'global' : $routeParams.feed;
+    //if personal feed the bind it in 'personalTweets' variable
     if($rootScope.feed == 'personal'){
       tweetService.personalTweet('personalTweets',$rootScope.currentPerson, 'initialize');
     }
     // Show _People on Twitter.
-       
     tweetService.user('users','initialize');
     // Called when user posts a new tweet.
     $scope.addTweet = function () {
@@ -104,20 +105,24 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
     $scope.userName = $routeParams.userId;
     
     $scope.gotoProfile = $rootScope.gotoProfile;
+    // follow someone by userId 
     $scope.follow = function (userId) {
       tweetService.followFunction(userId, true);
       $rootScope.isBeingFollowed = true;
     };
+    // unfollow someone by userId
     $scope.unFollow = function (userId) { 
       tweetService.followFunction(userId, false);
       $rootScope.isBeingFollowed = false;
     };
+    // add new tweet
     $scope.addTweet = function () {
       tweetService.addTweet($scope.msg);
       $scope.msg = '';
     };
     $rootScope.isBeingFollowed = false;
     $scope.isReady = false;
+    // callback function which is triggered to know if logged in user is following this person or not
     $scope.personalInfoCallback = function(){
       if(typeof $rootScope.myself != 'undefined'){
         if($rootScope.personalInfo.hits.hits.length){
@@ -126,6 +131,7 @@ app.controller('global', function ($scope, userSession, $location, $rootScope, $
         }
       }
     }
+    // get personal tweets and personal Info
     tweetService.personalTweet('personalTweets',$rootScope.currentPerson, 'initialize');
     tweetService.personalInfo('personalInfo', userId, $scope.personalInfoCallback);
   })

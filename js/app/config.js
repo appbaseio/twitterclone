@@ -1,8 +1,9 @@
+//Define the angular app
 var app = angular.module('twitter', ['ngRoute', 'ngSanitize', 'vs-repeat']);
+// In the app **$rootScope** is used for
+// changing the routes and managing visibility of navigation bar. 
 app.run(function ($rootScope, userSession, $location, $interval) {
     "use strict";
-    // Here **$rootScope** is used for
-    // changing the routes and managing visibility of navigation bar. 
     $rootScope.bahar = true;
     $rootScope.feed = 'global';
     $rootScope.exit = function () {

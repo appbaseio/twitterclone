@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>config.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>config.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Define the angular app</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> app = angular.module(<span class="hljs-string">'twitter'</span>, [<span class="hljs-string">'ngRoute'</span>, <span class="hljs-string">'ngSanitize'</span>, <span class="hljs-string">'vs-repeat'</span>]);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>In the app <strong>$rootScope</strong> is used for
+changing the routes and managing visibility of navigation bar. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>app.run(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$rootScope, userSession, $location, $interval</span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;
+    $rootScope.bahar = <span class="hljs-literal">true</span>;
+    $rootScope.feed = <span class="hljs-string">'global'</span>;
+    $rootScope.exit = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      userSession.exit();
+      $location.path(<span class="hljs-string">'/global'</span>);
+    };
+    $rootScope.gotoProfile = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userId</span>) </span>{
+      $location.path(<span class="hljs-string">'/profile/'</span> + userId);
+    };
+    $rootScope.search = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">text</span>) </span>{
+      $location.path(<span class="hljs-string">'/search/'</span> + text);
+    };
+    $rootScope.goHome = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">feed</span>) </span>{
+      $location.path(<span class="hljs-string">'/home/'</span> + feed);
+    };
+    $rootScope.hideNav = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      $rootScope.bahar = <span class="hljs-literal">true</span>;
+    };
+    $rootScope.showNav = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      $rootScope.bahar = <span class="hljs-literal">false</span>;
+    };
+    $rootScope.load = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      $location.path(<span class="hljs-string">'/loading'</span>);
+    };
+    $rootScope.urlify = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">text</span>) </span>{
+      <span class="hljs-keyword">var</span> urlRegex = <span class="hljs-regexp">/(https?:\/\/[^\s]+)/g</span>;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> text !== <span class="hljs-string">"undefined"</span>) {
+        <span class="hljs-keyword">return</span> text.replace(urlRegex, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">url</span>) </span>{
+          <span class="hljs-keyword">return</span> <span class="hljs-string">'&lt;a href="'</span> + url + <span class="hljs-string">'" target="_blank"&gt;'</span> + url + <span class="hljs-string">'&lt;/a&gt;'</span>;
+        });
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> text;
+      }
+    };
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Code for route management.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .config(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$routeProvider</span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;
+    $routeProvider.when(<span class="hljs-string">'/'</span>, {
+      controller: <span class="hljs-string">'global'</span>,
+      templateUrl: <span class="hljs-string">'views/global.html'</span>
+    })
+    .when(<span class="hljs-string">'/search/:text'</span>, {
+        controller: <span class="hljs-string">'search'</span>,
+        templateUrl: <span class="hljs-string">'views/search.html'</span>
+    })
+    .when(<span class="hljs-string">'/profile/:userId'</span>, {
+      controller: <span class="hljs-string">'profile'</span>,
+      templateUrl: <span class="hljs-string">'views/profile.html'</span>
+    })
+   .when(<span class="hljs-string">'/home/:feed'</span>, {
+      controller: <span class="hljs-string">'home'</span>,
+      templateUrl: <span class="hljs-string">'views/home.html'</span>
+    })
+    .otherwise({
+      redirectTo: <span class="hljs-string">'/'</span>
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

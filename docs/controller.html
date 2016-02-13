@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>controller.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>controller.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> app = angular.module(<span class="hljs-string">'twitter'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><strong>Controller: global</strong>.
+Show all tweets when no one is logged in.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>app.controller(<span class="hljs-string">'global'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, userSession, $location, $rootScope, $timeout, appbaseService, loginService, tweetService</span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Hide <em>navbar</em> if no one is logged in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $rootScope.hideNav();
+    $rootScope.feed = <span class="hljs-string">'global'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Called when the user enters name or when already logged in.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.login = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      $scope.loading = <span class="hljs-literal">true</span>;
+      userSession.setUser($scope.userId.replace(<span class="hljs-regexp">/ /g</span>, <span class="hljs-string">"_"</span>));
+      loginService.init($scope.afterLogin)
+    }
+    $scope.afterLogin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        userSession.initComplete = <span class="hljs-literal">true</span>;
+        $scope.loading = <span class="hljs-literal">false</span>;
+        $location.path(<span class="hljs-string">'/home/personal'</span>);
+      });
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Checks if a user is already logged in the session.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> ($scope.userId === userSession.getUser()) $scope.login();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Show all tweets under <em>global/tweets</em> using <code>searchStream</code>, in reverse order of their created date.
+Here we are using <strong>tweetService</strong> and first argument is name of $rootscope variable, that we gonna use it in view</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tweetService.globalTweet(<span class="hljs-string">'tweets'</span>,<span class="hljs-string">'initialize'</span>);
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong>Controller: search</strong>.
+Search’s for tweets in Appbase and shows results.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    .controller(<span class="hljs-string">'search'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, $rootScope, $routeParams, appbaseService, tweetService</span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Getting the ‘query text’ from route parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $rootScope.currentQuery = $routeParams.text;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Searching for tweets as well as users using the tweetService.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tweetService.searchTweet(<span class="hljs-string">'searchTweets'</span>, $routeParams.text, <span class="hljs-string">'initialize'</span>);
+    tweetService.searchUser(<span class="hljs-string">'searchUsers'</span>, $routeParams.text, <span class="hljs-string">'initialize'</span>);
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>Controller: navbar</strong>.
+Handles button clicks and visibility of buttons.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'navbar'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, userSession, $rootScope</span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Called when user enters a text in the search box and presses enter key.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.search = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      $rootScope.search($scope.searchText);
+      $scope.searchText = <span class="hljs-string">''</span>;
+    };
+    $scope.gotoProfile = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userId</span>) </span>{
+      <span class="hljs-keyword">if</span> (userId === <span class="hljs-literal">undefined</span>) { userId = userSession.getUser(); }
+      $rootScope.gotoProfile(userId);
+    };
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>Controller: home</strong>.
+This is what the user sees first when logged in. It shows the personal and global tweet feeds
+The personal tweet feed: shows tweets from people he follows.
+The global feed: tweets by everyone</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'home'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, userSession, $rootScope, $routeParams, tweetService, appbaseService </span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Check if the session is properly initiated,
+i.e. the ‘global’ controller set the flag ‘initComplete’ in userSession.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!userSession.initComplete) {
+      <span class="hljs-keyword">if</span> (!userSession.getUser()) {
+        $rootScope.exit();
+      } <span class="hljs-keyword">else</span> {
+        $rootScope.load();
+      }
+      <span class="hljs-keyword">return</span>;
+    }
+
+    $rootScope.showNav();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Get the logged in person from session using ‘userSession’ service</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $rootScope.currentPerson = userSession.getUser();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Get <strong>feed</strong> from route parameters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $rootScope.feed = $routeParams.feed === <span class="hljs-literal">undefined</span> ? <span class="hljs-string">'global'</span> : $routeParams.feed;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>if personal feed the bind it in ‘personalTweets’ variable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span>($rootScope.feed == <span class="hljs-string">'personal'</span>){
+      tweetService.personalTweet(<span class="hljs-string">'personalTweets'</span>,$rootScope.currentPerson, <span class="hljs-string">'initialize'</span>);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Show _People on Twitter.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tweetService.user(<span class="hljs-string">'users'</span>,<span class="hljs-string">'initialize'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Called when user posts a new tweet.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      tweetService.addTweet($scope.msg);
+      $scope.msg = <span class="hljs-string">''</span>;
+    };
+  })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><strong>Controller: profile</strong>.
+Where a user’s followings, followers and tweets are shown.
+A user can also see other’s profiles and choose to follow/unfollow the person from his/her profile.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  .controller(<span class="hljs-string">'profile'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">$scope, userSession, $rootScope, $routeParams, tweetService, appbaseService </span>) </span>{<span class="hljs-meta">
+    "use strict"</span>;
+    <span class="hljs-keyword">var</span> notLoggedIn;
+    <span class="hljs-keyword">if</span> (!userSession.initComplete) {
+      notLoggedIn = <span class="hljs-literal">true</span>;
+    }
+    !notLoggedIn &amp;&amp; $rootScope.showNav();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Get the userId from route params.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> userId = $routeParams.userId;
+    $scope.userId = $routeParams.userId;
+    $rootScope.currentPerson = userId;
+    $rootScope.feed = <span class="hljs-string">'personal'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Check whether this profile is of the logged in user.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.isMe = userSession.getUser() === userId;
+    $scope.userName = $routeParams.userId;
+    
+    $scope.gotoProfile = $rootScope.gotoProfile;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>follow someone by userId </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.follow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userId</span>) </span>{
+      tweetService.followFunction(userId, <span class="hljs-literal">true</span>);
+      $rootScope.isBeingFollowed = <span class="hljs-literal">true</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>unfollow someone by userId</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.unFollow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">userId</span>) </span>{ 
+      tweetService.followFunction(userId, <span class="hljs-literal">false</span>);
+      $rootScope.isBeingFollowed = <span class="hljs-literal">false</span>;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>add new tweet</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+      tweetService.addTweet($scope.msg);
+      $scope.msg = <span class="hljs-string">''</span>;
+    };
+    $rootScope.isBeingFollowed = <span class="hljs-literal">false</span>;
+    $scope.isReady = <span class="hljs-literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>callback function which is triggered to know if logged in user is following this person or not</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $scope.personalInfoCallback = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> $rootScope.myself != <span class="hljs-string">'undefined'</span>){
+        <span class="hljs-keyword">if</span>($rootScope.personalInfo.hits.hits.length){
+          $scope.isReady = <span class="hljs-literal">true</span>;
+          $rootScope.isBeingFollowed = $.inArray($rootScope.myself._source.name, $rootScope.personalInfo.hits.hits[<span class="hljs-number">0</span>]._source.followers) == <span class="hljs-string">'-1'</span> ? <span class="hljs-literal">false</span> : <span class="hljs-literal">true</span>; 
+        }
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>get personal tweets and personal Info</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tweetService.personalTweet(<span class="hljs-string">'personalTweets'</span>,$rootScope.currentPerson, <span class="hljs-string">'initialize'</span>);
+    tweetService.personalInfo(<span class="hljs-string">'personalInfo'</span>, userId, $scope.personalInfoCallback);
+  })</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
