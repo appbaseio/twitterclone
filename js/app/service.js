@@ -1,7 +1,7 @@
 (function() {
     var app = angular.module('twitter')
+        // **Run module** which contains the __appbase__ app credentials and also the default size of pagination
         .run(function($rootScope, userSession, $location, $interval) {
-            //Set the credentials for 'appbase'
             $rootScope.appbaseRef = new Appbase({
                 url: 'https://scalr.api.appbase.io',
                 appname: 'twitter',
@@ -14,9 +14,10 @@
             };
             $rootScope.setRequestInfo();
         })
-        //Creat the 'appbase-service' to use in global
+        // __appbaseService__ which we are using in tweetService for index data, update data, search, searchStream and bundleData with variable. 
         .service('appbaseService', function($rootScope, $timeout) {
             var methods = {};
+            // To insert the record
             methods.index = function(type, body) {
                 var appbaseObj = $rootScope.appbaseRef.index({
                     type: type,
@@ -24,6 +25,7 @@
                 });
                 return appbaseObj;
             };
+            // To update the record
             methods.update = function(type, body, id) {
                 var appbaseObj = $rootScope.appbaseRef.index({
                     type: type,
@@ -32,6 +34,7 @@
                 });
                 return appbaseObj;
             };
+            // get method of appbase
             methods.get = function(type, queryString) {
                 var appbaseObj = $rootScope.appbaseRef.get({
                     type: type,
@@ -41,8 +44,9 @@
                 });
                 return appbaseObj;
             };
+            // getstream method of appbase
             methods.getStream = function() {
-                var appbaseObj = $rootScope.appbaseRef.get({
+                var appbaseObj = $rootScope.appbaseRef.getStream({
                     type: type,
                     body: {
                         query: queryString
@@ -50,6 +54,7 @@
                 });
                 return appbaseObj;
             };
+            //search method of appbase
             methods.search = function(type, bodyObj) {
                 var appbaseObj = $rootScope.appbaseRef.search({
                     type: type,
@@ -57,6 +62,7 @@
                 });
                 return appbaseObj;
             };
+            //searchStream of appbase
             methods.searchStream = function(type, bodyObj) {
                 var appbaseObj = $rootScope.appbaseRef.searchStream({
                     type: type,
@@ -64,6 +70,7 @@
                 });
                 return appbaseObj;
             };
+            // getBundleData is responsible to bind the data with variable and also update that variable when streamed data is received. 
             methods.getBundleData = function(variable, type, bodyObj, callback) {
                 var defaultBodyObj = {
                     query: {
@@ -104,6 +111,7 @@
         //Create 'tweetService' for different functionality of tweets
         .service('tweetService', function($rootScope, $timeout, appbaseService, userSession) {
             var methods = {};
+            // Add new tweet with use of 'appbaseService' index method
             methods.addTweet = function(msg) {
                 appbaseService.index('tweets', {
                     by: userSession.getUser(),
@@ -111,6 +119,8 @@
                     createdAt: new Date()
                 });
             }
+            // Get global tweets with use of 'appbaseService' getBundeled method
+            // here step argument could be 'initialize' or 'scroll'.
             methods.globalTweet = function(relatedVariable, step) {
                 if(step == 'initialize'){
                     $rootScope.RequestParam[relatedVariable] = {
@@ -137,6 +147,7 @@
                     });
                 }
             }
+            // get the personal tweets same as global tweets, different thing is it's ``query``
             methods.personalTweet = function(relatedVariable, person, step) {
                 if(step == 'initialize'){
                     $rootScope[relatedVariable] = {};
@@ -168,6 +179,7 @@
                     });
                 }
             }
+            // same way for search tweets, ``query`` is different over here.
             methods.searchTweet = function(relatedVariable, text, step) {
                 if(step == 'initialize'){
                     $rootScope[relatedVariable] = {};
@@ -202,6 +214,7 @@
                     });
                 }
             }
+            // get all the users.
              methods.user = function(relatedVariable, step) {
                 if(step == 'initialize'){
                     $rootScope.RequestParam[relatedVariable] ={
@@ -228,6 +241,7 @@
                     });
                 }
             }
+            // fetch all the search users in __search__ route
              methods.searchUser = function(relatedVariable, text, step) {
                  if(step == 'initialize'){
                     $rootScope[relatedVariable] = {};
@@ -262,6 +276,7 @@
                     });
                 }
             }
+            // get the information of user by name
             methods.personalInfo = function(relatedVariable, person, callback) {
                 var searchQuery = {
                     query: {
@@ -273,6 +288,7 @@
                 $rootScope[relatedVariable] = {};
                 appbaseService.getBundleData(relatedVariable, 'users', searchQuery, callback);
             }
+            // follow/unfollow to user
             methods.followFunction = function(userId, follow) {
                 $rootScope.personalInfoSingle = $rootScope.personalInfo.hits.hits[0];
                 if (follow) {
@@ -301,7 +317,6 @@
                         }
                     }
                 });
-
 
                 loginObj.userSearch = function(callback) {
                     loginObj.checkUser.on('data', function(data) {
@@ -350,6 +365,7 @@
             };
             return userSession;
         })
+        // scrollDown directive which handles the pagination logic and we are using this directive in our views also
         .directive('scrollDown', function($rootScope, appbaseService, tweetService, $timeout) {
             return function(scope, elm, attr) {
                 var raw = elm[0];
@@ -380,6 +396,7 @@
                 });
             };
         })
+        // filter for twitter relative time
         .filter('relativeTime',function(){
             return function(timestamp) {
                 return new Date(timestamp).toTwitterRelativeTime();

@@ -1,5 +1,3 @@
-[![Code Climate](https://codeclimate.com/github/appbaseio/twitterclone/badges/gpa.svg)](https://codeclimate.com/github/appbaseio/twitterclone)
-
 ## How to run this locally:
 
 You can simply run a http-server on the root directory using 'python -m SimpleHTTPServer 8080' and run the app on http://localhost:8080!

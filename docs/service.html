@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>service.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>service.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> app = angular.module(<span class="hljs-string">'twitter'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><strong>Run module</strong> which contains the <strong>appbase</strong> app credentials and also the default size of pagination</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .run(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$rootScope, userSession, $location, $interval</span>) </span>{
+            $rootScope.appbaseRef = <span class="hljs-keyword">new</span> Appbase({
+                url: <span class="hljs-string">'https://scalr.api.appbase.io'</span>,
+                appname: <span class="hljs-string">'twitter'</span>,
+                username: <span class="hljs-string">'6HVI9SUIr'</span>,
+                password: <span class="hljs-string">'e601d171-dd83-48f0-8e8a-1cf06414ce69'</span>
+            });
+            $rootScope.setRequestInfo = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                $rootScope.RequestParam = {};
+                $rootScope.defaultSize = <span class="hljs-number">30</span>;
+            };
+            $rootScope.setRequestInfo();
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><strong>appbaseService</strong> which we are using in tweetService for index data, update data, search, searchStream and bundleData with variable. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .service(<span class="hljs-string">'appbaseService'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$rootScope, $timeout</span>) </span>{
+            <span class="hljs-keyword">var</span> methods = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>To insert the record</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.index = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, body</span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.index({
+                    type: type,
+                    body: body
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>To update the record</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.update = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, body, id</span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.index({
+                    type: type,
+                    id: id,
+                    body: body
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>get method of appbase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.get = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, queryString</span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.get({
+                    type: type,
+                    body: {
+                        query: queryString
+                    }
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>getstream method of appbase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.getStream = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.getStream({
+                    type: type,
+                    body: {
+                        query: queryString
+                    }
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>search method of appbase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.search = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, bodyObj</span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.search({
+                    type: type,
+                    body: bodyObj
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>searchStream of appbase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.searchStream = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">type, bodyObj</span>) </span>{
+                <span class="hljs-keyword">var</span> appbaseObj = $rootScope.appbaseRef.searchStream({
+                    type: type,
+                    body: bodyObj
+                });
+                <span class="hljs-keyword">return</span> appbaseObj;
+            };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>getBundleData is responsible to bind the data with variable and also update that variable when streamed data is received. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.getBundleData = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">variable, type, bodyObj, callback</span>) </span>{
+                <span class="hljs-keyword">var</span> defaultBodyObj = {
+                    query: {
+                        match_all: {}
+                    },
+                    size: $rootScope.defaultSize,
+                    <span class="hljs-keyword">from</span>: <span class="hljs-number">0</span>
+                };
+                <span class="hljs-keyword">var</span> bodyObj = <span class="hljs-keyword">typeof</span> bodyObj == <span class="hljs-string">'undefined'</span> ? defaultBodyObj : bodyObj;
+                methods.search(type, bodyObj).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                    $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                        $rootScope[variable] = data;
+                        <span class="hljs-keyword">if</span> (callback)
+                            callback();
+                        
+                        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> $rootScope[variable+<span class="hljs-string">'-stream'</span>] != <span class="hljs-string">'undefined'</span>){
+                            $rootScope[variable+<span class="hljs-string">'-stream'</span>].stop();
+                        }
+                        $rootScope[variable+<span class="hljs-string">'-stream'</span>] = methods.searchStream(type, bodyObj).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data2</span>) </span>{
+                            $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                                <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> $rootScope[variable] != <span class="hljs-string">'undefined'</span>){
+                                    $rootScope[variable].hits.hits.unshift(data2);
+                                }
+                                <span class="hljs-keyword">else</span>{
+                                    $rootScope[variable] = {hits:{hits:[data2]}};   
+                                }
+                            });
+                        }).on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                            <span class="hljs-built_in">console</span>.log(data);
+                        });
+                    });
+                }).on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                    <span class="hljs-built_in">console</span>.log(data);
+                });
+            };
+            <span class="hljs-keyword">return</span> methods;
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Create ‘tweetService’ for different functionality of tweets</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .service(<span class="hljs-string">'tweetService'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$rootScope, $timeout, appbaseService, userSession</span>) </span>{
+            <span class="hljs-keyword">var</span> methods = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Add new tweet with use of ‘appbaseService’ index method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.addTweet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">msg</span>) </span>{
+                appbaseService.index(<span class="hljs-string">'tweets'</span>, {
+                    by: userSession.getUser(),
+                    msg: msg,
+                    createdAt: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()
+                });
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Get global tweets with use of ‘appbaseService’ getBundeled method
+here step argument could be ‘initialize’ or ‘scroll’.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.globalTweet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, step</span>) </span>{
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    $rootScope.RequestParam[relatedVariable] = {
+                        size:$rootScope.defaultSize,
+                        <span class="hljs-keyword">from</span>:<span class="hljs-number">0</span>
+                    };
+                }
+                <span class="hljs-keyword">var</span> searchQuery = {
+                  query:  {match_all: {}},
+                  size:$rootScope.RequestParam[relatedVariable].size,
+                  <span class="hljs-keyword">from</span>:$rootScope.RequestParam[relatedVariable].from,
+                  sort:{
+                    <span class="hljs-string">"createdAt"</span>:<span class="hljs-string">"desc"</span>
+                  }
+                };
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'tweets'</span>, searchQuery);
+                }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'scroll'</span>){
+                    appbaseService.search(<span class="hljs-string">'tweets'</span>, searchQuery).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>get the personal tweets same as global tweets, different thing is it’s <code>query</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.personalTweet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, person, step</span>) </span>{
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        <span class="hljs-keyword">from</span>:<span class="hljs-number">0</span>
+                    };
+                }
+                <span class="hljs-keyword">var</span> searchQuery = {
+                    query: {
+                        term: {
+                            by: person
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    <span class="hljs-keyword">from</span>: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        <span class="hljs-string">"createdAt"</span>: <span class="hljs-string">"desc"</span>
+                    }
+                };
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'tweets'</span>, searchQuery);
+                }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'scroll'</span>){
+                    appbaseService.search(<span class="hljs-string">'tweets'</span>, searchQuery).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>same way for search tweets, <code>query</code> is different over here.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.searchTweet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, text, step</span>) </span>{
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        <span class="hljs-keyword">from</span>:<span class="hljs-number">0</span>
+                    };
+                }
+                <span class="hljs-keyword">var</span> searchQuery = {
+                    query: {
+                        multi_match: {
+                            query: text,
+                            operator: <span class="hljs-string">"and"</span>,
+                            fuzziness: <span class="hljs-string">"auto"</span>,
+                            fields: [<span class="hljs-string">"msg"</span>]
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    <span class="hljs-keyword">from</span>: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        <span class="hljs-string">"createdAt"</span>: <span class="hljs-string">"desc"</span>
+                    }
+                };
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'tweets'</span>, searchQuery);
+                }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'scroll'</span>){
+                    appbaseService.search(<span class="hljs-string">'tweets'</span>, searchQuery).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>get all the users.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>             methods.user = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, step</span>) </span>{
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    $rootScope.RequestParam[relatedVariable] ={
+                        size:$rootScope.defaultSize,
+                        <span class="hljs-keyword">from</span>:<span class="hljs-number">0</span>
+                    };
+                }
+                <span class="hljs-keyword">var</span> searchQuery = {
+                  query:  {match_all: {}},
+                  size:$rootScope.RequestParam[relatedVariable].size,
+                  <span class="hljs-keyword">from</span>:$rootScope.RequestParam[relatedVariable].from,
+                  sort:{
+                    <span class="hljs-string">"createdAt"</span>:<span class="hljs-string">"desc"</span>
+                  }
+                };
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'users'</span>, searchQuery);
+                }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'scroll'</span>){
+                    appbaseService.search(<span class="hljs-string">'users'</span>, searchQuery).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>fetch all the search users in <strong>search</strong> route</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>             methods.searchUser = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, text, step</span>) </span>{
+                 <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    $rootScope[relatedVariable] = {};
+                    $rootScope.RequestParam[relatedVariable] = {
+                        size:$rootScope.defaultSize,
+                        <span class="hljs-keyword">from</span>:<span class="hljs-number">0</span>
+                    };
+                }
+                <span class="hljs-keyword">var</span> searchQuery = {
+                    query: {
+                        multi_match: {
+                            query: text,
+                            operator: <span class="hljs-string">"and"</span>,
+                            fuzziness: <span class="hljs-string">"auto"</span>,
+                            fields: [<span class="hljs-string">"name"</span>]
+                        }
+                    },
+                    size: $rootScope.RequestParam[relatedVariable].size,
+                    <span class="hljs-keyword">from</span>: $rootScope.RequestParam[relatedVariable].from,
+                    sort: {
+                        <span class="hljs-string">"createdAt"</span>: <span class="hljs-string">"desc"</span>
+                    }
+                };
+                <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'initialize'</span>){
+                    appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'users'</span>, searchQuery);
+                }
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(step == <span class="hljs-string">'scroll'</span>){
+                    appbaseService.search(<span class="hljs-string">'users'</span>, searchQuery).on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                            $rootScope[relatedVariable].hits.hits = $rootScope[relatedVariable].hits.hits.concat(data.hits.hits)
+                        });
+                    });
+                }
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>get the information of user by name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.personalInfo = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">relatedVariable, person, callback</span>) </span>{
+                <span class="hljs-keyword">var</span> searchQuery = {
+                    query: {
+                        term: {
+                            name: person
+                        }
+                    }
+                }
+                $rootScope[relatedVariable] = {};
+                appbaseService.getBundleData(relatedVariable, <span class="hljs-string">'users'</span>, searchQuery, callback);
+            }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>follow/unfollow to user</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            methods.followFunction = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">userId, follow</span>) </span>{
+                $rootScope.personalInfoSingle = $rootScope.personalInfo.hits.hits[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">if</span> (follow) {
+                    $rootScope.personalInfoSingle._source.followers.push($rootScope.myself._source.name);
+                    $rootScope.myself._source.following.push(userId);
+                } <span class="hljs-keyword">else</span> {
+                    $rootScope.personalInfoSingle._source.followers.remove($rootScope.myself._source.name);
+                    $rootScope.myself._source.following.remove(userId);
+                }
+                appbaseService.update(<span class="hljs-string">'users'</span>, $rootScope.personalInfoSingle._source, $rootScope.personalInfoSingle._id);
+                appbaseService.update(<span class="hljs-string">'users'</span>, $rootScope.myself._source, $rootScope.myself._id);
+            }
+            <span class="hljs-keyword">return</span> methods;
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Create ‘LoginService’ - to check if user is already exists and if not create the user and logged him in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .service(<span class="hljs-string">'loginService'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$rootScope, $timeout, appbaseService, userSession</span>) </span>{
+            <span class="hljs-keyword">var</span> methods = {};
+
+            methods.init = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">callback</span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>check if user is already exists</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">var</span> loginObj = {};
+                loginObj.checkUser = appbaseService.search(<span class="hljs-string">'users'</span>, {
+                    query: {
+                        term: {
+                            name: userSession.getUser()
+                        }
+                    }
+                });
+
+                loginObj.userSearch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">callback</span>) </span>{
+                    loginObj.checkUser.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                        <span class="hljs-keyword">if</span> (data.hits.hits.length) {
+                            $rootScope.myself = data.hits.hits[<span class="hljs-number">0</span>];
+                            callback();
+                        } <span class="hljs-keyword">else</span> {
+                            loginObj.userIndex(callback);
+                        }
+                    });
+                }
+                loginObj.userSearch(callback);
+
+                loginObj.userIndex = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">callback</span>) </span>{
+                    $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                        <span class="hljs-keyword">var</span> userObj = {
+                            name: userSession.getUser(),
+                            followers: [],
+                            following: [],
+                            createdAt: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()
+                        };
+                        loginObj.appbaseLogin = appbaseService.index(<span class="hljs-string">'users'</span>, userObj);
+                        loginObj.appbaseLogin.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                            data._source = userObj;
+                            $rootScope.myself = data;
+                            callback();
+                        });
+                    });
+                }
+            }
+
+            <span class="hljs-keyword">return</span> methods;
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Stores logged in user’s id.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .service(<span class="hljs-string">'userSession'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+            <span class="hljs-keyword">var</span> userSession = {};
+            userSession.initComplete = <span class="hljs-literal">false</span>;
+            userSession.setUser = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">userId</span>) </span>{
+                localStorage.setItem(<span class="hljs-string">"currentLoggedInUser"</span>, userId);
+            };
+            userSession.exit = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                localStorage.removeItem(<span class="hljs-string">"currentLoggedInUser"</span>);
+            };
+            userSession.getUser = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                <span class="hljs-keyword">return</span> localStorage.getItem(<span class="hljs-string">"currentLoggedInUser"</span>);
+            };
+            <span class="hljs-keyword">return</span> userSession;
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>scrollDown directive which handles the pagination logic and we are using this directive in our views also</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .directive(<span class="hljs-string">'scrollDown'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$rootScope, appbaseService, tweetService, $timeout</span>) </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">scope, elm, attr</span>) </span>{
+                <span class="hljs-keyword">var</span> raw = elm[<span class="hljs-number">0</span>];
+                <span class="hljs-built_in">console</span>.log(raw.scrollHeight, raw.offsetHeight);
+                elm.bind(<span class="hljs-string">'scroll'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                    <span class="hljs-keyword">if</span> (raw.scrollTop + raw.offsetHeight + <span class="hljs-number">1</span> &gt;= raw.scrollHeight) { <span class="hljs-comment">// + 1 added, as a workaround for: (raw.scrollTop + raw.offsetHeight- raw.scrollHeight) would always stop at -1.</span>
+                        <span class="hljs-keyword">var</span> type = attr.scrollDown;
+                        
+                        <span class="hljs-keyword">var</span> totalFlag = $rootScope[type][<span class="hljs-string">'hits'</span>][<span class="hljs-string">'total'</span>] &gt; $rootScope[type][<span class="hljs-string">'hits'</span>][<span class="hljs-string">'hits'</span>].length;
+                        <span class="hljs-keyword">if</span>(totalFlag){
+                            $rootScope.RequestParam[type].from += $rootScope.RequestParam[type].size;
+                            <span class="hljs-keyword">switch</span> (type) {
+                                <span class="hljs-keyword">case</span> <span class="hljs-string">'tweets'</span>:
+                                    tweetService.globalTweet(type, <span class="hljs-string">'scroll'</span>);
+                                <span class="hljs-keyword">break</span>;
+                                <span class="hljs-keyword">case</span> <span class="hljs-string">'personalTweets'</span>:
+                                    tweetService.personalTweet(type, $rootScope.currentPerson, <span class="hljs-string">'scroll'</span>);
+                                <span class="hljs-keyword">break</span>;
+                                <span class="hljs-keyword">case</span> <span class="hljs-string">'searchTweets'</span>:
+                                    tweetService.searchTweet(type, $rootScope.currentQuery,<span class="hljs-string">'scroll'</span>);
+                                <span class="hljs-keyword">break</span>;
+                                <span class="hljs-keyword">case</span> <span class="hljs-string">'users'</span>:
+                                    tweetService.user(type, <span class="hljs-string">'scroll'</span>);
+                                <span class="hljs-keyword">break</span>;    
+                            }
+                        }
+                    }
+                });
+            };
+        })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>filter for twitter relative time</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .filter(<span class="hljs-string">'relativeTime'</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">timestamp</span>) </span>{
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(timestamp).toTwitterRelativeTime();
+            };
+        });
+})();
+
+<span class="hljs-built_in">Array</span>.prototype.remove = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> what, a = <span class="hljs-built_in">arguments</span>,
+        L = a.length,
+        ax;
+    <span class="hljs-keyword">while</span> (L &amp;&amp; <span class="hljs-keyword">this</span>.length) {
+        what = a[--L];
+        <span class="hljs-keyword">while</span> ((ax = <span class="hljs-keyword">this</span>.indexOf(what)) !== <span class="hljs-number">-1</span>) {
+            <span class="hljs-keyword">this</span>.splice(ax, <span class="hljs-number">1</span>);
+        }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
