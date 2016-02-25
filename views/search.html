@@ -17,7 +17,7 @@
                   <h3>Tweets</h3>
                      <div>
                      <ul class="list-group list-tweet" id="tweetstream" style="height: 75vh; max-height:1000px; overflow: auto" scroll-down="searchTweets">
-                        <li ng-repeat="tweet in searchTweets.hits.hits  track by $index | orderBy:'_source.createdAt':true">
+                        <li ng-repeat="tweet in searchTweets.hits.hits | orderBy:'_source.createdAt':true  track by $index">
                            <div data-ng-include src="'views/tweetFormat.html'"></div>
                         </li>
                     </ul>            
@@ -26,7 +26,7 @@
                 <div class="col-md-6" style="height: 200px;">
                   <h3>Users</h3>
                     <ul class="list-group" style="height: 75vh; max-height:1000px; overflow: auto"  scroll-down="searchUsers">
-                        <li class="list-group-item" ng-repeat="user in searchUsers.hits.hits  track by $index | orderBy:'_source.createdAt':true"
+                        <li class="list-group-item" ng-repeat="user in searchUsers.hits.hits | orderBy:'_source.createdAt':true  track by $index"
                          ng-if="user._source.name && user._source.name != ''"> <!--ng-repeat-->
                             <a><h4 ng-click="gotoProfile(user._source.name)" style="cursor:pointer" class="list-group-item-heading">{{user._source.name}}</h4></a>
                         </li>

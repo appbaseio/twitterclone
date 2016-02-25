@@ -2,6 +2,11 @@
   "name": "TwitterAppbase",
   "private": true,
   "dependencies": {
-    "appbase-js": "~0.9.0"
+    "appbase-js": "~0.9.0",
+    "bootstrap": "~3.3.6",
+    "angular": "~1.5.0",
+    "jquery": "~2.2.1",
+    "angular-sanitize": "~1.5.0",
+    "angular-route": "~1.5.0"
   }
 }
