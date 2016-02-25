@@ -1,13 +1,13 @@
 <div ng-show="feed == 'global'">
     <ul class="list-group list-tweet" id="tweetstream" style="height: 75vh; max-height:1000px; overflow: auto" scroll-down="tweets">
-        <li  ng-repeat="tweet in tweets.hits.hits track by $index | orderBy:'_source.createdAt':true">
+        <li  ng-repeat="tweet in tweets.hits.hits | orderBy:'_source.createdAt':true  track by $index">
            <div data-ng-include src="'views/tweetFormat.html'"></div>
         </li>
     </ul>
 </div>
 <div ng-show="feed == 'personal'">
     <ul class="list-group list-tweet" style="height: 75vh; max-height:1000px; overflow: auto"  scroll-down="personalTweets">
-        <li ng-repeat="tweet in personalTweets.hits.hits track by $index | orderBy:'_source.createdAt':true">
+        <li ng-repeat="tweet in personalTweets.hits.hits | orderBy:'_source.createdAt':true  track by $index">
            <div data-ng-include src="'views/tweetFormat.html'"></div>
         </li>
     </ul>
