@@ -1,13 +1,7 @@
 (function() {
     var app = angular.module('twitter')
         .run(function($rootScope, userSession, $location, $interval) {
-            //Set the credentials for 'appbase'
-            $rootScope.appbaseRef = new Appbase({
-                url: 'https://scalr.api.appbase.io',
-                appname: 'twitter',
-                username: '6HVI9SUIr',
-                password: 'e601d171-dd83-48f0-8e8a-1cf06414ce69'
-            });
+            $rootScope.appbaseRef = new Appbase(credentials);
             $rootScope.setRequestInfo = function() {
                 $rootScope.RequestParam = {};
                 $rootScope.defaultSize = 30;
